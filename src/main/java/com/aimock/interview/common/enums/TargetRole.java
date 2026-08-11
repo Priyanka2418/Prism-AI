@@ -1,0 +1,14 @@
+package com.aimock.interview.common.enums;
+
+public enum TargetRole {
+    BACKEND_DEVELOPER,
+    FRONTEND_DEVELOPER,
+    FULL_STACK_DEVELOPER,
+    SOFTWARE_ENGINEER,
+    DATA_ENGINEER,
+    DATA_SCIENTIST,
+    ML_ENGINEER,
+    DEVOPS_ENGINEER,
+    CLOUD_ENGINEER,
+    QA_ENGINEER
+}
