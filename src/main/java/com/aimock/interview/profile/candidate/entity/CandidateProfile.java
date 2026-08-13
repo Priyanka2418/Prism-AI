@@ -1,9 +1,10 @@
-package com.aimock.interview.user.entity;
+package com.aimock.interview.profile.candidate.entity;
 
 
 import com.aimock.interview.common.enums.ExperienceLevel;
 import com.aimock.interview.common.enums.PreferredDomain;
 import com.aimock.interview.common.enums.TargetRole;
+import com.aimock.interview.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StudentProfile {
+public class CandidateProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
