@@ -30,13 +30,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(nullable = false, length = 100)
-    private String name;
-
-    @Column(length = 500)
-    private String profileUrl;
-
-    @Column(nullable = false,length = 20)
+    @Column(nullable = false,length = 255)
     private String password;
 
     @Enumerated(EnumType.STRING)
