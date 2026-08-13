@@ -1,12 +1,13 @@
 package com.aimock.interview.user.service;
 
 import com.aimock.interview.common.enums.Role;
+import com.aimock.interview.common.exception.DuplicateResourceException;
+import com.aimock.interview.common.exception.ResourceNotFoundException;
 import com.aimock.interview.user.dto.user_request.UserCreateRequest;
 import com.aimock.interview.user.dto.user_response.UserResponse;
 import com.aimock.interview.user.entity.User;
 
 import com.aimock.interview.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
             UserCreateRequest request,
             Role role) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException(
+            throw new DuplicateResourceException(
                     "Email already registered");
         }
 
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(UUID id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                                 "User not found with id: " + id));
 
         return mapToResponse(user);
@@ -71,7 +72,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(UUID id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                                   "User not found with id: " + id));
         userRepository.delete(user);
     }
