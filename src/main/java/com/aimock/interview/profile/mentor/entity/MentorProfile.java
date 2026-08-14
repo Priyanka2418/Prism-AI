@@ -1,6 +1,7 @@
-package com.aimock.interview.user.entity;
+package com.aimock.interview.profile.mentor.entity;
 
 import com.aimock.interview.common.enums.VerificationStatus;
+import com.aimock.interview.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,6 +76,9 @@ public class MentorProfile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "verified_by")
     private User verifiedBy;
+
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
+    private String rejectionReason;
 
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
