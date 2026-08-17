@@ -4,7 +4,8 @@ import com.aimock.interview.common.enums.ExperienceLevel;
 import com.aimock.interview.interview.enums.Difficulty;
 import com.aimock.interview.interview.enums.InterviewStatus;
 import com.aimock.interview.interview.enums.InterviewType;
-import com.aimock.interview.user.entity.StudentProfile;
+import com.aimock.interview.profile.candidate.entity.CandidateProfile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,12 +40,13 @@ public class Interview {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "student_id",
             nullable = false
     )
-    private StudentProfile student;
+    private CandidateProfile student;
 
     @Enumerated(EnumType.STRING)
     @Column(
@@ -101,6 +103,9 @@ public class Interview {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "expires_at")
+    private LocalDateTime expiresAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
