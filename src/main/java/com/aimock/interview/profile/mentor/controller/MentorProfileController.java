@@ -13,75 +13,60 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/mentors")
+@RequestMapping("/api/v1/mentor-profiles")
 @RequiredArgsConstructor
 public class MentorProfileController {
 
     private final MentorProfileService mentorProfileService;
 
-    @PostMapping("/profile")
+    @PostMapping
     public ResponseEntity<MentorProfileResponse> createProfile(
-            @RequestParam UUID userId,
-            @Valid @RequestBody MentorProfileRequest request
-    ) {
-
-        MentorProfileResponse response =
-                mentorProfileService.createProfile(userId, request);
+            @Valid @RequestBody MentorProfileRequest request) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(response);
+                .body(mentorProfileService.createProfile(request));
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<MentorProfileResponse> getMyProfile(
-            @RequestParam UUID userId
-    ) {
+    @GetMapping("/me")
+    public ResponseEntity<MentorProfileResponse> getMyProfile() {
 
-        MentorProfileResponse response =
-                mentorProfileService.getProfileByUserId(userId);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                mentorProfileService.getMyProfile()
+        );
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<MentorProfileResponse> getProfileById(
-            @PathVariable UUID id
-    ) {
+//    @GetMapping("/{id}")
+//    public ResponseEntity<MentorProfileResponse> getProfileById(
+//            @PathVariable UUID id) {
+//
+//        MentorProfileResponse response =
+//                mentorProfileService.getProfileById(id);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
-        MentorProfileResponse response =
-                mentorProfileService.getProfileById(id);
+//    @GetMapping
+//    public ResponseEntity<List<MentorProfileResponse>> getAllProfiles() {
+//        List<MentorProfileResponse> profiles =
+//                mentorProfileService.getAllProfiles();
+//
+//        return ResponseEntity.ok(profiles);
+//    }
 
-        return ResponseEntity.ok(response);
+    @PutMapping("/me")
+    public ResponseEntity<MentorProfileResponse> updateMyProfile(
+            @Valid @RequestBody MentorProfileRequest request) {
+
+        return ResponseEntity.ok(
+                mentorProfileService.updateMyProfile(request)
+        );
     }
 
-    @GetMapping
-    public ResponseEntity<List<MentorProfileResponse>> getAllProfiles() {
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyProfile() {
 
-        List<MentorProfileResponse> profiles =
-                mentorProfileService.getAllProfiles();
-
-        return ResponseEntity.ok(profiles);
-    }
-
-    @PutMapping("/profile")
-    public ResponseEntity<MentorProfileResponse> updateProfile(
-            @RequestParam UUID userId,
-            @Valid @RequestBody MentorProfileRequest request
-    ) {
-
-        MentorProfileResponse response =
-                mentorProfileService.updateProfile(userId, request);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping("/profile")
-    public ResponseEntity<Void> deleteProfile(
-            @RequestParam UUID userId
-    ) {
-
-        mentorProfileService.deleteProfile(userId);
+        mentorProfileService.deleteMyProfile();
 
         return ResponseEntity.noContent().build();
     }

@@ -9,20 +9,17 @@ import java.util.UUID;
 public interface MentorProfileService {
 
     MentorProfileResponse createProfile(
-            UUID userId,
-            MentorProfileRequest request
-    );
+            MentorProfileRequest request);
 
     MentorProfileResponse getProfileById(UUID id);
 
-    MentorProfileResponse getProfileByUserId(UUID userId);
+    MentorProfileResponse getMyProfile();
 
     List<MentorProfileResponse> getAllProfiles();
 
-    MentorProfileResponse updateProfile(
-            UUID userId,
+    MentorProfileResponse updateMyProfile(
             MentorProfileRequest request
     );
 
-    void deleteProfile(UUID userId);
+    void deleteMyProfile();
 }
