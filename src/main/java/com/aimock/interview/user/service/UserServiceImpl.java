@@ -9,6 +9,7 @@ import com.aimock.interview.user.entity.User;
 
 import com.aimock.interview.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse registerCandidate(UserCreateRequest request) {
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
 
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(role);
 
         User savedUser = userRepository.save(user);
