@@ -1,5 +1,6 @@
 package com.aimock.interview.admin.service;
 
+import com.aimock.interview.auth.security.SecurityUtils;
 import com.aimock.interview.common.enums.Role;
 import com.aimock.interview.common.enums.VerificationStatus;
 import com.aimock.interview.common.exception.DuplicateResourceException;
@@ -9,7 +10,6 @@ import com.aimock.interview.profile.mentor.dto.MentorProfileResponse;
 import com.aimock.interview.profile.mentor.entity.MentorProfile;
 import com.aimock.interview.profile.mentor.repository.MentorProfileRepository;
 import com.aimock.interview.user.entity.User;
-import com.aimock.interview.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class AdminMentorVerificationServiceImpl
         implements AdminMentorVerificationService {
 
     private final MentorProfileRepository mentorProfileRepository;
-    private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
 
     @Override
     public List<MentorProfileResponse> getPendingMentors() {
@@ -58,12 +58,11 @@ public class AdminMentorVerificationServiceImpl
 
     @Override
     public MentorProfileResponse verifyMentor(
-            UUID mentorProfileId,
-            UUID adminUserId
-    ) {
+            UUID mentorProfileId) {
 
         MentorProfile profile = getProfile(mentorProfileId);
-        User admin = getAdmin(adminUserId);
+
+        User admin = getCurrentAdmin();
 
         if (profile.getVerificationStatus() != VerificationStatus.PENDING) {
             throw new DuplicateResourceException(
@@ -86,12 +85,12 @@ public class AdminMentorVerificationServiceImpl
     @Override
     public MentorProfileResponse rejectMentor(
             UUID mentorProfileId,
-            UUID adminUserId,
             String rejectionReason
     ) {
 
         MentorProfile profile = getProfile(mentorProfileId);
-        User admin = getAdmin(adminUserId);
+
+        User admin = getCurrentAdmin();
 
         if (profile.getVerificationStatus() != VerificationStatus.PENDING) {
             throw new DuplicateResourceException(
@@ -117,23 +116,6 @@ public class AdminMentorVerificationServiceImpl
                         new ResourceNotFoundException("Mentor profile not found"));
     }
 
-    private User getAdmin(UUID adminUserId) {
-
-        User user = userRepository.findById(adminUserId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Admin user not found"
-                        ));
-
-        if (user.getRole() != Role.ADMIN) {
-            throw new ForbiddenException(
-                    "Only admin users can perform mentor verification"
-            );
-        }
-
-        return user;
-    }
-
     private MentorProfileResponse mapToResponse(
             MentorProfile profile
     ) {
@@ -157,5 +139,19 @@ public class AdminMentorVerificationServiceImpl
                 profile.getCreatedAt(),
                 profile.getUpdatedAt()
         );
+    }
+
+
+    private User getCurrentAdmin() {
+
+        User admin = securityUtils.getCurrentUser();
+
+        if (admin.getRole() != Role.ADMIN) {
+            throw new ForbiddenException(
+                    "Only admin users can perform mentor verification"
+            );
+        }
+
+        return admin;
     }
 }

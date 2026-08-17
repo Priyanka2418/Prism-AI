@@ -20,7 +20,6 @@ public class AdminMentorVerificationController {
 
     @GetMapping
     public ResponseEntity<List<MentorProfileResponse>> getAllMentors() {
-
         return ResponseEntity.ok(
                 verificationService.getAllMentors()
         );
@@ -28,7 +27,6 @@ public class AdminMentorVerificationController {
 
     @GetMapping("/pending")
     public ResponseEntity<List<MentorProfileResponse>> getPendingMentors() {
-
         return ResponseEntity.ok(
                 verificationService.getPendingMentors()
         );
@@ -37,29 +35,33 @@ public class AdminMentorVerificationController {
     @GetMapping("/{mentorProfileId}")
     public ResponseEntity<MentorProfileResponse> getMentorForVerification(
             @PathVariable UUID mentorProfileId) {
-        return ResponseEntity.ok(verificationService.getMentorForVerification(
-                        mentorProfileId));
+
+        return ResponseEntity.ok(
+                verificationService.getMentorForVerification(
+                        mentorProfileId
+                )
+        );
     }
 
     @PatchMapping("/{mentorProfileId}/verify")
     public ResponseEntity<MentorProfileResponse> verifyMentor(
-            @PathVariable UUID mentorProfileId,
-            @RequestParam UUID adminUserId) {
+            @PathVariable UUID mentorProfileId) {
 
-        return ResponseEntity.ok(verificationService.verifyMentor(
-                        mentorProfileId,
-                        adminUserId));
+        return ResponseEntity.ok(
+                verificationService.verifyMentor(mentorProfileId)
+        );
     }
 
     @PatchMapping("/{mentorProfileId}/reject")
     public ResponseEntity<MentorProfileResponse> rejectMentor(
             @PathVariable UUID mentorProfileId,
-            @RequestParam UUID adminUserId,
             @Valid @RequestBody MentorRejectionRequest request) {
+
         return ResponseEntity.ok(
                 verificationService.rejectMentor(
                         mentorProfileId,
-                        adminUserId,
-                        request.rejectionReason()));
+                        request.rejectionReason()
+                )
+        );
     }
 }
