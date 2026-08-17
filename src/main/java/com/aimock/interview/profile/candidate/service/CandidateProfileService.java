@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public interface CandidateProfileService {
 
-    CandidateProfileResponse createProfile(UUID userId, CandidateProfileRequest request);
+    CandidateProfileResponse createProfile( CandidateProfileRequest request);
 
     CandidateProfileResponse getProfileById(UUID id);
 
-    CandidateProfileResponse getProfileByUserId(UUID userId);
+    CandidateProfileResponse getMyProfile();
 
     List<CandidateProfileResponse> getAllProfiles();
 
-    CandidateProfileResponse updateProfile(UUID id, CandidateProfileRequest request);
+    CandidateProfileResponse updateMyProfile(CandidateProfileRequest request);
 
-    void deleteProfile(UUID id);
+    void deleteMyProfile();
 }

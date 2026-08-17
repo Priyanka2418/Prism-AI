@@ -1,5 +1,6 @@
 package com.aimock.interview.profile.candidate.service;
 
+import com.aimock.interview.auth.security.SecurityUtils;
 import com.aimock.interview.common.exception.DuplicateResourceException;
 import com.aimock.interview.common.exception.ResourceNotFoundException;
 import com.aimock.interview.profile.candidate.dto.CandidateProfileRequest;
@@ -20,25 +21,22 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
     private final CandidateProfileRepository candidateProfileRepository;
     private final UserRepository userRepository;
+    private final SecurityUtils securityUtils;
 
     @Override
     public CandidateProfileResponse createProfile(
-            UUID userId,
             CandidateProfileRequest request
     ) {
 
+        User user = securityUtils.getCurrentUser();
+
+        UUID userId = user.getId();
+
         if (candidateProfileRepository.existsByUserId(userId)) {
             throw new DuplicateResourceException(
-                    "Student profile already exists"
+                    "Candidate profile already exists"
             );
         }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "User not found"
-                        )
-                );
 
         CandidateProfile profile = new CandidateProfile();
 
@@ -71,13 +69,13 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
     }
 
     @Override
-    public CandidateProfileResponse getProfileByUserId(UUID userId) {
+    public CandidateProfileResponse getMyProfile() {
 
         CandidateProfile profile = candidateProfileRepository
-                .findByUserId(userId)
+                .findByUserId(securityUtils.getCurrentUser().getId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Student profile not found"
+                                "Candidate profile not found"
                         )
                 );
 
@@ -94,15 +92,17 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
     }
 
     @Override
-    public CandidateProfileResponse updateProfile(
-            UUID id,
+    public CandidateProfileResponse updateMyProfile(
             CandidateProfileRequest request
     ) {
 
-        CandidateProfile profile = candidateProfileRepository.findById(id)
+        UUID userId = securityUtils.getCurrentUser().getId();
+
+        CandidateProfile profile = candidateProfileRepository
+                .findByUserId(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Student profile not found"
+                                "Candidate profile not found"
                         )
                 );
 
@@ -121,12 +121,15 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
     }
 
     @Override
-    public void deleteProfile(UUID id) {
+    public void deleteMyProfile() {
 
-        CandidateProfile profile = candidateProfileRepository.findById(id)
+        UUID userId = securityUtils.getCurrentUser().getId();
+
+        CandidateProfile profile = candidateProfileRepository
+                .findByUserId(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Student profile not found"
+                                "Candidate profile not found"
                         )
                 );
 
