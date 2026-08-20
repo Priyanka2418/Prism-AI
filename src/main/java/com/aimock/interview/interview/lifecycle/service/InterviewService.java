@@ -1,7 +1,7 @@
-package com.aimock.interview.interview.service;
+package com.aimock.interview.interview.lifecycle.service;
 
-import com.aimock.interview.interview.dto.CreateInterviewRequest;
-import com.aimock.interview.interview.dto.InterviewResponse;
+import com.aimock.interview.interview.lifecycle.dto.CreateInterviewRequest;
+import com.aimock.interview.interview.lifecycle.dto.InterviewResponse;
 
 import java.util.UUID;
 

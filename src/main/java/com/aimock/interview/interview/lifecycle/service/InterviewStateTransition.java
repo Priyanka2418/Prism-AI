@@ -1,7 +1,7 @@
-package com.aimock.interview.interview.service;
+package com.aimock.interview.interview.lifecycle.service;
 
-import com.aimock.interview.interview.entity.Interview;
-import com.aimock.interview.interview.enums.InterviewStatus;
+import com.aimock.interview.interview.lifecycle.entity.Interview;
+import com.aimock.interview.interview.commons.enums.InterviewStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
