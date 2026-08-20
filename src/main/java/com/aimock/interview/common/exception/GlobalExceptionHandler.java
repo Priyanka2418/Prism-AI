@@ -53,4 +53,17 @@ public class GlobalExceptionHandler {
                         LocalDateTime.now()
                 ));
     }
+
+    @ExceptionHandler(InvalidStateException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidState(
+            InvalidStateException ex
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
 }
