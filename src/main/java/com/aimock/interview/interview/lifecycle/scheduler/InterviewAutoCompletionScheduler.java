@@ -1,6 +1,6 @@
-package com.aimock.interview.interview.scheduler;
+package com.aimock.interview.interview.lifecycle.scheduler;
 
-import com.aimock.interview.interview.service.InterviewService;
+import com.aimock.interview.interview.lifecycle.service.InterviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
