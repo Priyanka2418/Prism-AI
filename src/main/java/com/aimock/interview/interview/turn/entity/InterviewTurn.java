@@ -1,10 +1,11 @@
-package com.aimock.interview.interview.entity;
+package com.aimock.interview.interview.turn.entity;
 
 
-import com.aimock.interview.interview.enums.AiAction;
-import com.aimock.interview.interview.enums.Difficulty;
-import com.aimock.interview.interview.enums.Speaker;
-import com.aimock.interview.interview.enums.TurnType;
+import com.aimock.interview.interview.commons.enums.AiAction;
+import com.aimock.interview.interview.commons.enums.Difficulty;
+import com.aimock.interview.interview.commons.enums.Speaker;
+import com.aimock.interview.interview.commons.enums.TurnType;
+import com.aimock.interview.interview.lifecycle.entity.Interview;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,6 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.UUID;
 
 @Entity
 @Table(
@@ -39,8 +39,8 @@ import java.util.UUID;
 public class InterviewTurn {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
