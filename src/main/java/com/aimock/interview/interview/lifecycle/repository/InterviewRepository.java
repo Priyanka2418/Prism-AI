@@ -1,7 +1,7 @@
-package com.aimock.interview.interview.repository;
+package com.aimock.interview.interview.lifecycle.repository;
 
-import com.aimock.interview.interview.entity.Interview;
-import com.aimock.interview.interview.enums.InterviewStatus;
+import com.aimock.interview.interview.lifecycle.entity.Interview;
+import com.aimock.interview.interview.commons.enums.InterviewStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

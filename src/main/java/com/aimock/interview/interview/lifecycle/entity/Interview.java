@@ -1,9 +1,9 @@
-package com.aimock.interview.interview.entity;
+package com.aimock.interview.interview.lifecycle.entity;
 
 import com.aimock.interview.common.enums.ExperienceLevel;
-import com.aimock.interview.interview.enums.Difficulty;
-import com.aimock.interview.interview.enums.InterviewStatus;
-import com.aimock.interview.interview.enums.InterviewType;
+import com.aimock.interview.interview.commons.enums.Difficulty;
+import com.aimock.interview.interview.commons.enums.InterviewStatus;
+import com.aimock.interview.interview.commons.enums.InterviewType;
 import com.aimock.interview.profile.candidate.entity.CandidateProfile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
