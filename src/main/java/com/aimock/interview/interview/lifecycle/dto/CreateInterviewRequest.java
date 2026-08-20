@@ -1,8 +1,8 @@
-package com.aimock.interview.interview.dto;
+package com.aimock.interview.interview.lifecycle.dto;
 
 import com.aimock.interview.common.enums.ExperienceLevel;
-import com.aimock.interview.interview.enums.Difficulty;
-import com.aimock.interview.interview.enums.InterviewType;
+import com.aimock.interview.interview.commons.enums.Difficulty;
+import com.aimock.interview.interview.commons.enums.InterviewType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -29,7 +29,7 @@ public record CreateInterviewRequest(
         List<String> topics,
 
         @NotNull
-        @Min(30)
+        @Min(2)
         @Max(120)
         Integer durationMinutes
 ) {

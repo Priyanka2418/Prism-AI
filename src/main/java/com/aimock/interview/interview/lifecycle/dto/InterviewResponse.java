@@ -1,9 +1,9 @@
-package com.aimock.interview.interview.dto;
+package com.aimock.interview.interview.lifecycle.dto;
 
 import com.aimock.interview.common.enums.ExperienceLevel;
-import com.aimock.interview.interview.enums.Difficulty;
-import com.aimock.interview.interview.enums.InterviewStatus;
-import com.aimock.interview.interview.enums.InterviewType;
+import com.aimock.interview.interview.commons.enums.Difficulty;
+import com.aimock.interview.interview.commons.enums.InterviewStatus;
+import com.aimock.interview.interview.commons.enums.InterviewType;
 
 import java.time.LocalDateTime;
 import java.util.List;

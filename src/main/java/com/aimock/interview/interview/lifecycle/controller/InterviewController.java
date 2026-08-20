@@ -1,12 +1,13 @@
-package com.aimock.interview.interview.controller;
+package com.aimock.interview.interview.lifecycle.controller;
 
-import com.aimock.interview.interview.dto.CreateInterviewRequest;
-import com.aimock.interview.interview.dto.InterviewResponse;
-import com.aimock.interview.interview.service.InterviewService;
+import com.aimock.interview.interview.lifecycle.dto.CreateInterviewRequest;
+import com.aimock.interview.interview.lifecycle.dto.InterviewResponse;
+import com.aimock.interview.interview.lifecycle.service.InterviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,10 +19,10 @@ public class InterviewController {
 
     private final InterviewService interviewService;
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PostMapping
     public ResponseEntity<InterviewResponse> createInterview(
-            @Valid @RequestBody CreateInterviewRequest request
-    ) {
+            @Valid @RequestBody CreateInterviewRequest request) {
 
         InterviewResponse interview =
                 interviewService.createInterview(request);
@@ -31,10 +32,10 @@ public class InterviewController {
                 .body(interview);
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PostMapping("/{interviewId}/start")
     public ResponseEntity<InterviewResponse> startInterview(
-            @PathVariable UUID interviewId
-    ) {
+            @PathVariable UUID interviewId) {
 
         InterviewResponse response =
                 interviewService.startInterview(interviewId);
@@ -42,10 +43,10 @@ public class InterviewController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @PostMapping("/{interviewId}/cancel")
     public ResponseEntity<InterviewResponse> cancelInterview(
-            @PathVariable UUID interviewId
-    ) {
+            @PathVariable UUID interviewId) {
 
         InterviewResponse response =
                 interviewService.cancelInterview(interviewId);
@@ -53,12 +54,11 @@ public class InterviewController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('CANDIDATE')")
     @GetMapping("/{interviewId}")
     public ResponseEntity<InterviewResponse> getInterview(
-            @PathVariable UUID interviewId
-    ) {
+            @PathVariable UUID interviewId) {
         return ResponseEntity.ok(
-                interviewService.getInterview(interviewId)
-        );
+                interviewService.getInterview(interviewId));
     }
 }
