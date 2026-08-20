@@ -1,4 +1,4 @@
-package com.aimock.interview.interview.commons;
+package com.aimock.interview.interview.commons.enums;
 
 public enum InterviewStatus {
     CREATED,
