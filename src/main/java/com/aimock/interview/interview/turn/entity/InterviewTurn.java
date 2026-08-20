@@ -87,7 +87,7 @@ public class InterviewTurn {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private Difficulty interviewDifficulty;
+    private Difficulty difficulty;
 
     @Enumerated(EnumType.STRING)
     @Column(

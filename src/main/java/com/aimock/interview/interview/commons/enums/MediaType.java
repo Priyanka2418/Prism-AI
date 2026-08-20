@@ -1,4 +1,4 @@
-package com.aimock.interview.interview.enums;
+package com.aimock.interview.interview.commons;
 
 public enum MediaType {
     VIDEO,
