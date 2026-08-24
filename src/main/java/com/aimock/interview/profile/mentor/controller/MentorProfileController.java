@@ -2,6 +2,8 @@ package com.aimock.interview.profile.mentor.controller;
 
 import com.aimock.interview.profile.mentor.dto.MentorProfileRequest;
 import com.aimock.interview.profile.mentor.dto.MentorProfileResponse;
+import com.aimock.interview.profile.mentor.dto.MentorPublicProfileResponse;
+import com.aimock.interview.profile.mentor.dto.MentorPublicProfileUpdateRequest;
 import com.aimock.interview.profile.mentor.service.MentorProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class MentorProfileController {
 
     private final MentorProfileService mentorProfileService;
 
+    // Mentor creates profile
     @PostMapping
     public ResponseEntity<MentorProfileResponse> createProfile(
             @Valid @RequestBody MentorProfileRequest request) {
@@ -28,6 +31,7 @@ public class MentorProfileController {
                 .body(mentorProfileService.createProfile(request));
     }
 
+    // Mentor's own profile
     @GetMapping("/me")
     public ResponseEntity<MentorProfileResponse> getMyProfile() {
 
@@ -36,32 +40,6 @@ public class MentorProfileController {
         );
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<MentorProfileResponse> getProfileById(
-//            @PathVariable UUID id) {
-//
-//        MentorProfileResponse response =
-//                mentorProfileService.getProfileById(id);
-//
-//        return ResponseEntity.ok(response);
-//    }
-
-//    @GetMapping
-//    public ResponseEntity<List<MentorProfileResponse>> getAllProfiles() {
-//        List<MentorProfileResponse> profiles =
-//                mentorProfileService.getAllProfiles();
-//
-//        return ResponseEntity.ok(profiles);
-//    }
-
-    @PutMapping("/me")
-    public ResponseEntity<MentorProfileResponse> updateMyProfile(
-            @Valid @RequestBody MentorProfileRequest request) {
-
-        return ResponseEntity.ok(
-                mentorProfileService.updateMyProfile(request)
-        );
-    }
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteMyProfile() {
@@ -69,5 +47,20 @@ public class MentorProfileController {
         mentorProfileService.deleteMyProfile();
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/me/public-profile")
+    public ResponseEntity<MentorPublicProfileResponse> updatePublicProfile(
+            @Valid @RequestBody MentorPublicProfileUpdateRequest request) {
+
+        return ResponseEntity.ok(
+                mentorProfileService.updatePublicProfile(request));
+    }
+
+    @GetMapping("/me/public-profile")
+    public ResponseEntity<MentorPublicProfileResponse> getMyPublicProfile() {
+
+        return ResponseEntity.ok(
+                mentorProfileService.getMyPublicProfile());
     }
 }
