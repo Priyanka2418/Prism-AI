@@ -1,5 +1,6 @@
 package com.aimock.interview.admin.service;
 
+import com.aimock.interview.admin.dto.MentorVerificationResponse;
 import com.aimock.interview.auth.security.SecurityUtils;
 import com.aimock.interview.common.enums.Role;
 import com.aimock.interview.common.enums.VerificationStatus;
@@ -8,6 +9,7 @@ import com.aimock.interview.common.exception.ForbiddenException;
 import com.aimock.interview.common.exception.ResourceNotFoundException;
 import com.aimock.interview.profile.mentor.dto.MentorProfileResponse;
 import com.aimock.interview.profile.mentor.entity.MentorProfile;
+import com.aimock.interview.profile.mentor.mapper.MentorProfileMapper;
 import com.aimock.interview.profile.mentor.repository.MentorProfileRepository;
 import com.aimock.interview.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class AdminMentorVerificationServiceImpl
 
     private final MentorProfileRepository mentorProfileRepository;
     private final SecurityUtils securityUtils;
+    private final MentorProfileMapper mentorProfileMapper;
 
     @Override
     public List<MentorProfileResponse> getPendingMentors() {
@@ -31,7 +34,7 @@ public class AdminMentorVerificationServiceImpl
         return mentorProfileRepository
                 .findByVerificationStatus(VerificationStatus.PENDING)
                 .stream()
-                .map(this::mapToResponse)
+                .map(mentorProfileMapper::toResponse)
                 .toList();
     }
 
@@ -44,7 +47,7 @@ public class AdminMentorVerificationServiceImpl
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Mentor profile not found"));
 
-        return mapToResponse(profile);
+        return mentorProfileMapper.toResponse(profile);
     }
 
     @Override
@@ -52,106 +55,67 @@ public class AdminMentorVerificationServiceImpl
 
         return mentorProfileRepository.findAll()
                 .stream()
-                .map(this::mapToResponse)
+                .map(mentorProfileMapper::toResponse)
                 .toList();
     }
 
     @Override
-    public MentorProfileResponse verifyMentor(
-            UUID mentorProfileId) {
+    public MentorVerificationResponse verifyMentor(UUID mentorProfileId) {
 
-        MentorProfile profile = getProfile(mentorProfileId);
+        User admin = securityUtils.getCurrentUser();
 
-        User admin = getCurrentAdmin();
+        MentorProfile profile =
+                mentorProfileRepository.findById(mentorProfileId)
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                        "Mentor profile not found"));
 
-        if (profile.getVerificationStatus() != VerificationStatus.PENDING) {
-            throw new DuplicateResourceException(
-                    "Mentor profile is already " +
-                            profile.getVerificationStatus()
-            );
+        if (profile.getVerificationStatus()
+                != VerificationStatus.PENDING) {
+            throw new IllegalStateException(
+                    "Mentor profile is not pending verification");
         }
 
         profile.setVerificationStatus(VerificationStatus.VERIFIED);
+
         profile.setVerifiedBy(admin);
         profile.setVerifiedAt(LocalDateTime.now());
         profile.setRejectionReason(null);
 
-        MentorProfile savedProfile =
-                mentorProfileRepository.save(profile);
+        MentorProfile savedProfile = mentorProfileRepository.save(profile);
 
-        return mapToResponse(savedProfile);
+        return new MentorVerificationResponse(
+                savedProfile.getId(),
+                savedProfile.getVerificationStatus());
     }
 
     @Override
-    public MentorProfileResponse rejectMentor(
-            UUID mentorProfileId,
-            String rejectionReason
-    ) {
+    public MentorVerificationResponse rejectMentor(
+            UUID mentorProfileId, String rejectionReason) {
 
-        MentorProfile profile = getProfile(mentorProfileId);
+        User admin = securityUtils.getCurrentUser();
 
-        User admin = getCurrentAdmin();
+        MentorProfile profile =
+                mentorProfileRepository.findById(mentorProfileId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Mentor profile not found"));
 
-        if (profile.getVerificationStatus() != VerificationStatus.PENDING) {
-            throw new DuplicateResourceException(
-                    "Mentor profile is already " +
-                            profile.getVerificationStatus()
-            );
+        if (profile.getVerificationStatus()
+                != VerificationStatus.PENDING) {
+            throw new IllegalStateException(
+                    "Mentor profile is not pending verification");
         }
 
         profile.setVerificationStatus(VerificationStatus.REJECTED);
+
         profile.setVerifiedBy(admin);
         profile.setVerifiedAt(LocalDateTime.now());
         profile.setRejectionReason(rejectionReason);
 
-        MentorProfile savedProfile =
-                mentorProfileRepository.save(profile);
+        MentorProfile savedProfile = mentorProfileRepository.save(profile);
 
-        return mapToResponse(savedProfile);
-    }
-
-    private MentorProfile getProfile(UUID mentorProfileId) {
-        return mentorProfileRepository.findById(mentorProfileId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Mentor profile not found"));
-    }
-
-    private MentorProfileResponse mapToResponse(
-            MentorProfile profile
-    ) {
-
-        return new MentorProfileResponse(
-                profile.getId(),
-                profile.getUser().getId(),
-                profile.getHeadline(),
-                profile.getCompany(),
-                profile.getJobTitle(),
-                profile.getYearsOfExperience(),
-                profile.getExpertise(),
-                profile.getBio(),
-                profile.getLinkedinUrl(),
-                profile.getVerificationStatus(),
-                profile.getVerifiedBy() != null
-                        ? profile.getVerifiedBy().getId()
-                        : null,
-                profile.getVerifiedAt(),
-                profile.getRejectionReason(),
-                profile.getCreatedAt(),
-                profile.getUpdatedAt()
-        );
-    }
-
-
-    private User getCurrentAdmin() {
-
-        User admin = securityUtils.getCurrentUser();
-
-        if (admin.getRole() != Role.ADMIN) {
-            throw new ForbiddenException(
-                    "Only admin users can perform mentor verification"
-            );
-        }
-
-        return admin;
+        return new MentorVerificationResponse(
+                savedProfile.getId(),
+                savedProfile.getVerificationStatus());
     }
 }
