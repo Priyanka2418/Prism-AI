@@ -2,6 +2,7 @@ package com.aimock.interview.profile.mentor.repository;
 
 import com.aimock.interview.common.enums.VerificationStatus;
 import com.aimock.interview.profile.mentor.entity.MentorProfile;
+import com.aimock.interview.profile.mentor.enums.PublicProfileStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,7 +16,11 @@ public interface MentorProfileRepository extends JpaRepository<MentorProfile, UU
     boolean existsByUserId(UUID userId);
 
     List<MentorProfile> findByVerificationStatus(
-            VerificationStatus verificationStatus
+            VerificationStatus verificationStatus);
+
+    List<MentorProfile> findByVerificationStatusAndPublicProfileStatus(
+            VerificationStatus verificationStatus,
+            PublicProfileStatus publicProfileStatus
     );
 }
 
