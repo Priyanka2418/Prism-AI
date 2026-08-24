@@ -1,6 +1,7 @@
 package com.aimock.interview.profile.mentor.dto;
 
 import com.aimock.interview.common.enums.VerificationStatus;
+import com.aimock.interview.profile.mentor.enums.PublicProfileStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +18,7 @@ public class MentorProfileResponse {
 
     private UUID userId;
 
-    private String headline;
+    private String displayName;
 
     private String company;
 
@@ -25,13 +26,11 @@ public class MentorProfileResponse {
 
     private BigDecimal yearsOfExperience;
 
-    private List<String> expertise;
-
-    private String bio;
-
     private String linkedinUrl;
 
     private VerificationStatus verificationStatus;
+    private PublicProfileStatus publicProfileStatus;
+
 
     private UUID verifiedBy;
 

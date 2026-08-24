@@ -1,6 +1,7 @@
 package com.aimock.interview.profile.mentor.entity;
 
 import com.aimock.interview.common.enums.VerificationStatus;
+import com.aimock.interview.profile.mentor.enums.PublicProfileStatus;
 import com.aimock.interview.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,8 +21,7 @@ import java.util.UUID;
         indexes = {
                 @Index(
                         name = "idx_mentor_verification_status",
-                        columnList = "verification_status"
-                )
+                        columnList = "verification_status")
         }
 )
 @Getter
@@ -41,6 +41,12 @@ public class MentorProfile {
             unique = true
     )
     private User user;
+
+    @Column(name = "display_name", length = 150, nullable = false )
+    private String displayName;
+
+    @Column(name = "profile_image_url", length = 500)
+    private String profileImageUrl;
 
     @Column(length = 200)
     private String headline;
@@ -72,6 +78,14 @@ public class MentorProfile {
     )
     private VerificationStatus verificationStatus =
             VerificationStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "public_profile_status",
+            nullable = false, length = 20
+    )
+    private PublicProfileStatus publicProfileStatus =
+            PublicProfileStatus.INCOMPLETE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "verified_by")
