@@ -1,6 +1,7 @@
 package com.aimock.interview.admin.controller;
 
 import com.aimock.interview.admin.dto.MentorRejectionRequest;
+import com.aimock.interview.admin.dto.MentorVerificationResponse;
 import com.aimock.interview.admin.service.AdminMentorVerificationService;
 import com.aimock.interview.profile.mentor.dto.MentorProfileResponse;
 import jakarta.validation.Valid;
@@ -21,15 +22,13 @@ public class AdminMentorVerificationController {
     @GetMapping
     public ResponseEntity<List<MentorProfileResponse>> getAllMentors() {
         return ResponseEntity.ok(
-                verificationService.getAllMentors()
-        );
+                verificationService.getAllMentors());
     }
 
     @GetMapping("/pending")
     public ResponseEntity<List<MentorProfileResponse>> getPendingMentors() {
         return ResponseEntity.ok(
-                verificationService.getPendingMentors()
-        );
+                verificationService.getPendingMentors());
     }
 
     @GetMapping("/{mentorProfileId}")
@@ -37,31 +36,25 @@ public class AdminMentorVerificationController {
             @PathVariable UUID mentorProfileId) {
 
         return ResponseEntity.ok(
-                verificationService.getMentorForVerification(
-                        mentorProfileId
-                )
-        );
+                verificationService.getMentorForVerification(mentorProfileId));
     }
 
     @PatchMapping("/{mentorProfileId}/verify")
-    public ResponseEntity<MentorProfileResponse> verifyMentor(
+    public ResponseEntity<MentorVerificationResponse> verifyMentor(
             @PathVariable UUID mentorProfileId) {
 
         return ResponseEntity.ok(
-                verificationService.verifyMentor(mentorProfileId)
-        );
+                verificationService.verifyMentor(mentorProfileId));
     }
 
     @PatchMapping("/{mentorProfileId}/reject")
-    public ResponseEntity<MentorProfileResponse> rejectMentor(
+    public ResponseEntity<MentorVerificationResponse> rejectMentor(
             @PathVariable UUID mentorProfileId,
             @Valid @RequestBody MentorRejectionRequest request) {
 
         return ResponseEntity.ok(
                 verificationService.rejectMentor(
                         mentorProfileId,
-                        request.rejectionReason()
-                )
-        );
+                        request.rejectionReason()));
     }
 }
