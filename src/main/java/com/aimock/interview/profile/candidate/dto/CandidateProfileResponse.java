@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CandidateProfileResponse {
 
     private UUID id;
-    private UUID userId;
+    private String displayName;
     private String college;
     private String degree;
     private ExperienceLevel experienceLevel;

@@ -41,6 +41,9 @@ public class CandidateProfile {
     )
     private User user;
 
+    @Column(name = "display_name", nullable = false, length = 100)
+    private String displayName;
+
     @Column(length = 100)
     private String college;
 
