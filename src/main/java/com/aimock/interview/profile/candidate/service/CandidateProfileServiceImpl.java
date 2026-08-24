@@ -7,6 +7,7 @@ import com.aimock.interview.profile.candidate.dto.CandidateProfileCreateRequest;
 import com.aimock.interview.profile.candidate.dto.CandidateProfileResponse;
 import com.aimock.interview.profile.candidate.dto.CandidateProfileUpdateRequest;
 import com.aimock.interview.profile.candidate.entity.CandidateProfile;
+import com.aimock.interview.profile.candidate.mapper.CandidateProfileMapper;
 import com.aimock.interview.profile.candidate.repository.CandidateProfileRepository;
 import com.aimock.interview.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
     private final CandidateProfileRepository candidateProfileRepository;
     private final SecurityUtils securityUtils;
+    private final CandidateProfileMapper candidateProfileMapper;
+
 
     @Override
     public CandidateProfileResponse createProfile(
@@ -32,38 +35,18 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
         if (candidateProfileRepository.existsByUserId(userId)) {
             throw new DuplicateResourceException(
-                    "Candidate profile already exists"
-            );
+                    "Candidate profile already exists");
         }
 
-        CandidateProfile profile = new CandidateProfile();
+        CandidateProfile profile =
+                candidateProfileMapper.toEntity(request);
 
         profile.setUser(user);
-        profile.setCollege(request.getCollege());
-        profile.setDegree(request.getDegree());
-        profile.setExperienceLevel(request.getExperienceLevel());
-        profile.setPreferredDomain(request.getPreferredDomain());
-        profile.setSkills(request.getSkills());
-        profile.setResumeUrl(request.getResumeUrl());
-        profile.setTargetRole(request.getTargetRole());
 
         CandidateProfile savedProfile =
                 candidateProfileRepository.save(profile);
 
-        return mapToResponse(savedProfile);
-    }
-
-    @Override
-    public CandidateProfileResponse getProfileById(UUID id) {
-
-        CandidateProfile profile = candidateProfileRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Student profile not found"
-                        )
-                );
-
-        return mapToResponse(profile);
+        return candidateProfileMapper.toResponse(savedProfile);
     }
 
     @Override
@@ -73,20 +56,9 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
                 .findByUserId(securityUtils.getCurrentUser().getId())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Candidate profile not found"
-                        )
-                );
+                                "Candidate profile not found"));
 
-        return mapToResponse(profile);
-    }
-
-    @Override
-    public List<CandidateProfileResponse> getAllProfiles() {
-
-        return candidateProfileRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        return candidateProfileMapper.toResponse(profile);
     }
 
     @Override
@@ -99,22 +71,14 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
                 .findByUserId(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
-                                "Candidate profile not found"
-                        )
-                );
+                                "Candidate profile not found"));
 
-        profile.setCollege(request.getCollege());
-        profile.setDegree(request.getDegree());
-        profile.setExperienceLevel(request.getExperienceLevel());
-        profile.setPreferredDomain(request.getPreferredDomain());
-        profile.setSkills(request.getSkills());
-        profile.setResumeUrl(request.getResumeUrl());
-        profile.setTargetRole(request.getTargetRole());
+        candidateProfileMapper.updateProfile(request, profile);
 
         CandidateProfile updatedProfile =
                 candidateProfileRepository.save(profile);
 
-        return mapToResponse(updatedProfile);
+        return candidateProfileMapper.toResponse(updatedProfile);
     }
 
     @Override
@@ -124,29 +88,9 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
         CandidateProfile profile = candidateProfileRepository
                 .findByUserId(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Candidate profile not found"
-                        )
-                );
+                .orElseThrow(() -> new ResourceNotFoundException(
+                                "Candidate profile not found"));
 
         candidateProfileRepository.delete(profile);
-    }
-
-    private CandidateProfileResponse mapToResponse(
-            CandidateProfile profile
-    ) {
-
-        return new CandidateProfileResponse(
-                profile.getId(),
-                profile.getUser().getId(),
-                profile.getCollege(),
-                profile.getDegree(),
-                profile.getExperienceLevel(),
-                profile.getPreferredDomain(),
-                profile.getSkills(),
-                profile.getResumeUrl(),
-                profile.getTargetRole()
-        );
     }
 }
