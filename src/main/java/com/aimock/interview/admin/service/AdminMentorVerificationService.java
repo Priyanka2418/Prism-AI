@@ -1,5 +1,6 @@
 package com.aimock.interview.admin.service;
 
+import com.aimock.interview.admin.dto.MentorVerificationResponse;
 import com.aimock.interview.profile.mentor.dto.MentorProfileResponse;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface AdminMentorVerificationService {
 
     MentorProfileResponse getMentorForVerification(UUID mentorProfileId);
 
-    MentorProfileResponse verifyMentor(UUID mentorProfileId);
+    MentorVerificationResponse verifyMentor(UUID mentorProfileId);
 
-    MentorProfileResponse rejectMentor(
+    MentorVerificationResponse  rejectMentor(
             UUID mentorProfileId,
             String rejectionReason
     );
