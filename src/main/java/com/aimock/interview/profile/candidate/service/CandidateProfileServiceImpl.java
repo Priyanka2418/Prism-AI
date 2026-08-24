@@ -3,12 +3,12 @@ package com.aimock.interview.profile.candidate.service;
 import com.aimock.interview.auth.security.SecurityUtils;
 import com.aimock.interview.common.exception.DuplicateResourceException;
 import com.aimock.interview.common.exception.ResourceNotFoundException;
-import com.aimock.interview.profile.candidate.dto.CandidateProfileRequest;
+import com.aimock.interview.profile.candidate.dto.CandidateProfileCreateRequest;
 import com.aimock.interview.profile.candidate.dto.CandidateProfileResponse;
+import com.aimock.interview.profile.candidate.dto.CandidateProfileUpdateRequest;
 import com.aimock.interview.profile.candidate.entity.CandidateProfile;
 import com.aimock.interview.profile.candidate.repository.CandidateProfileRepository;
 import com.aimock.interview.user.entity.User;
-import com.aimock.interview.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,11 @@ import java.util.UUID;
 public class CandidateProfileServiceImpl implements CandidateProfileService {
 
     private final CandidateProfileRepository candidateProfileRepository;
-    private final UserRepository userRepository;
     private final SecurityUtils securityUtils;
 
     @Override
     public CandidateProfileResponse createProfile(
-            CandidateProfileRequest request
-    ) {
+            CandidateProfileCreateRequest request) {
 
         User user = securityUtils.getCurrentUser();
 
@@ -93,8 +91,7 @@ public class CandidateProfileServiceImpl implements CandidateProfileService {
 
     @Override
     public CandidateProfileResponse updateMyProfile(
-            CandidateProfileRequest request
-    ) {
+            CandidateProfileUpdateRequest request) {
 
         UUID userId = securityUtils.getCurrentUser().getId();
 
