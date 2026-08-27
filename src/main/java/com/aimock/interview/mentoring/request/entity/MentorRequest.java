@@ -27,10 +27,7 @@ import java.util.UUID;
                         columnList = "interview_id"),
                 @Index(
                         name = "idx_mentor_request_status",
-                        columnList = "status"),
-                @Index(
-                        name = "idx_mentor_request_requested_at",
-                        columnList = "requested_at")
+                        columnList = "status")
         }
 )
 @Getter
