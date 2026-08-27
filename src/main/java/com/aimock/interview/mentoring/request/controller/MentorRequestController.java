@@ -1,7 +1,7 @@
 package com.aimock.interview.mentoring.request.controller;
 
-import com.aimock.interview.mentoring.request.dto.CreateMentorRequest;
 import com.aimock.interview.mentoring.request.dto.MentorRequestResponse;
+import com.aimock.interview.mentoring.request.dto.RejectMentorRequest;
 import com.aimock.interview.mentoring.request.service.MentorRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,25 +10,44 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/mentors")
+@RequestMapping("/api/v1/mentor/mentoring-requests")
+@PreAuthorize("hasRole('MENTOR')")
 @RequiredArgsConstructor
 public class MentorRequestController {
 
     private final MentorRequestService mentorRequestService;
 
-    @PreAuthorize("hasRole('CANDIDATE')")
-    @PostMapping("/{mentorId}/mentoring-requests")
-    public ResponseEntity<MentorRequestResponse> createRequest(
-            @PathVariable UUID mentorId,
-            @Valid @RequestBody CreateMentorRequest request) {
-        MentorRequestResponse response =
-                mentorRequestService.createRequest(mentorId, request);
+    @GetMapping
+    public ResponseEntity<List<MentorRequestResponse>> getMentorPendingRequests() {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        return ResponseEntity.ok(
+                mentorRequestService.getMentorPendingRequests()
+        );
+    }
+
+    @PatchMapping("/{requestId}/accept")
+    public ResponseEntity<MentorRequestResponse> acceptRequest(
+            @PathVariable UUID requestId) {
+
+        return ResponseEntity.ok(
+                mentorRequestService.acceptRequest(requestId)
+        );
+    }
+
+    @PatchMapping("/{requestId}/reject")
+    public ResponseEntity<MentorRequestResponse> rejectRequest(
+            @PathVariable UUID requestId,
+            @Valid @RequestBody RejectMentorRequest request) {
+
+        return ResponseEntity.ok(
+                mentorRequestService.rejectRequest(
+                        requestId,
+                        request
+                )
+        );
     }
 }
