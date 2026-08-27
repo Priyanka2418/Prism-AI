@@ -19,7 +19,7 @@ public record CreateMentorRequest(
         LocalDateTime requestedStartTime,
 
         @NotNull(message = "Requested duration is required")
-        @Min(value = 30, message = "Requested duration must be at least 15 minutes")
+        @Min(value = 30, message = "Requested duration must be at least 30 minutes")
         @Max(value = 120, message = "Requested duration must not exceed 120 minutes")
         Integer requestedDurationMinutes,
 
