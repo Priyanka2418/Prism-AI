@@ -33,27 +33,18 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/api/v1/users/candidate",
                                 "/api/v1/users/mentor",
-                                "/api/v1/ai/test",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .requestMatchers(
-                                "/api/v1/admin/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers(
-                                "/api/v1/student-profiles/**")
-                        .hasRole("CANDIDATE")
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/api/v1/users/**"
-                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
