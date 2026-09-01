@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #0A0910;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-accent: #8B5CF6;
+  --color-mute: #8A8794;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  background-color: #05040A;
+  color: white;
+}
+
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 110s linear infinite;
+}
+
+.text-outline {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+  color: transparent;
+}
