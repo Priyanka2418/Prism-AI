@@ -1,8 +1,11 @@
 package com.aimock.interview.user.controller;
 
+import com.aimock.interview.auth.dto.AuthResponse;
+import com.aimock.interview.auth.security.AuthCookieService;
 import com.aimock.interview.user.dto.user_request.UserCreateRequest;
 import com.aimock.interview.user.dto.user_response.UserResponse;
 import com.aimock.interview.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,20 +22,40 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final AuthCookieService authCookieService;
 
     @PostMapping("/candidate")
-    public ResponseEntity<UserResponse> createCandidate(
-            @Valid @RequestBody UserCreateRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.registerCandidate(request));
+    public ResponseEntity<Void> createCandidate(
+            @Valid @RequestBody UserCreateRequest request,
+            HttpServletResponse response) {
+
+        AuthResponse authResponse =
+                userService.registerCandidate(request);
+
+        authCookieService.addAccessTokenCookie(
+                response, authResponse.getAccessToken());
+
+        authCookieService.addRefreshTokenCookie(
+                response, authResponse.getRefreshToken());
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/mentor")
-    public ResponseEntity<UserResponse> createMentor(
-            @Valid @RequestBody UserCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.registerMentor(request));
+    public ResponseEntity<Void> createMentor(
+            @Valid @RequestBody UserCreateRequest request,
+            HttpServletResponse response) {
+
+        AuthResponse authResponse =
+                userService.registerMentor(request);
+
+        authCookieService.addAccessTokenCookie(
+                response, authResponse.getAccessToken());
+
+        authCookieService.addRefreshTokenCookie(
+                response, authResponse.getRefreshToken());
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{id}")
@@ -41,7 +64,7 @@ public class UserController {
                 userService.getUserById(id));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(
