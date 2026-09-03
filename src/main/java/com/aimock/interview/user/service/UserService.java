@@ -1,6 +1,7 @@
 package com.aimock.interview.user.service;
 
 
+import com.aimock.interview.auth.dto.AuthResponse;
 import com.aimock.interview.user.dto.user_request.UserCreateRequest;
 import com.aimock.interview.user.dto.user_response.UserResponse;
 import jakarta.validation.Valid;
@@ -17,7 +18,7 @@ public interface UserService {
 
     void deleteUser(UUID id);
 
-    UserResponse registerCandidate(@Valid UserCreateRequest request);
+    AuthResponse registerCandidate(@Valid UserCreateRequest request);
 
-    UserResponse registerMentor(@Valid UserCreateRequest request);
+    AuthResponse  registerMentor(@Valid UserCreateRequest request);
 }

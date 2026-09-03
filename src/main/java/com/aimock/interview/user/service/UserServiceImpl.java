@@ -1,5 +1,7 @@
 package com.aimock.interview.user.service;
 
+import com.aimock.interview.auth.dto.AuthResponse;
+import com.aimock.interview.auth.service.AuthService;
 import com.aimock.interview.common.enums.Role;
 import com.aimock.interview.common.exception.DuplicateResourceException;
 import com.aimock.interview.common.exception.ResourceNotFoundException;
@@ -21,20 +23,22 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     @Override
-    public UserResponse registerCandidate(UserCreateRequest request) {
+    public AuthResponse registerCandidate(UserCreateRequest request) {
         return registerUser(request, Role.CANDIDATE);
     }
 
     @Override
-    public UserResponse registerMentor(UserCreateRequest request) {
+    public AuthResponse registerMentor(UserCreateRequest request) {
         return registerUser(request, Role.MENTOR);
     }
 
-    private UserResponse registerUser(
+    private AuthResponse registerUser(
             UserCreateRequest request,
             Role role) {
+
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateResourceException(
                     "Email already registered");
@@ -43,12 +47,14 @@ public class UserServiceImpl implements UserService {
         User user = new User();
 
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
+        );
         user.setRole(role);
 
         User savedUser = userRepository.save(user);
 
-        return mapToResponse(savedUser);
+        return authService.authenticate(savedUser);
     }
 
     @Override
