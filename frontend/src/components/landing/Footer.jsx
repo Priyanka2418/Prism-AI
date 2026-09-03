@@ -93,9 +93,11 @@ const Footer = () => {
           <div className="flex space-x-6 text-xl">
             {/* GitHub */}
             <a
-              href="#"
+              href="https://github.com/Priyanka2418/Prism-AI"
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-cyan-400 transition-colors"
-              aria-label="GitHub"
+              aria-label="GitHub Repository"
             >
               <i className="fa-brands fa-github"></i>
             </a>
