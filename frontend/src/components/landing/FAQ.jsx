@@ -32,7 +32,7 @@ function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <section className="bg-[#030207] px-6 py-20">
+    <section  id = "faq" className="bg-[#030207] px-6 py-20">
       <div className="mx-auto max-w-3xl">
 
         {/* Heading */}
