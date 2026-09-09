@@ -18,7 +18,7 @@ public class InterviewFeedbackController {
     private final InterviewFeedbackService interviewFeedbackService;
 
     @PostMapping("/generate")
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     public ResponseEntity<InterviewFeedbackResponse> generateFeedback(
             @PathVariable UUID interviewId) {
 
@@ -26,7 +26,7 @@ public class InterviewFeedbackController {
                 interviewFeedbackService.generateFeedback(interviewId));
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @GetMapping
     public ResponseEntity<InterviewFeedbackResponse> getFeedback(
             @PathVariable UUID interviewId) {

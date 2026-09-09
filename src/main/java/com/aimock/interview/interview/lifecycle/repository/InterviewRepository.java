@@ -14,4 +14,6 @@ public interface InterviewRepository extends JpaRepository<Interview, UUID> {
             InterviewStatus status,
             LocalDateTime time);
 
+    List<Interview> findByStudentIdOrderByCreatedAtDesc(UUID studentId);
+
 }

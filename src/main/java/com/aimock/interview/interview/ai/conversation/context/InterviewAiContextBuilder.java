@@ -89,12 +89,6 @@ public class InterviewAiContextBuilder {
          // Extract candidate statements from the recent context.
          // These are useful for generating specific follow-up questions.
 
-        String recentCandidatePoints = previousTurns.stream()
-                .filter(turn -> turn.getSpeaker() == Speaker.CANDIDATE)
-
-                .map(turn -> "- " + turn.getContent())
-                .collect(Collectors.joining("\n"));
-
         InterviewTurn latestQuestion = allQuestions.isEmpty()
                 ? null
                 : allQuestions.get(allQuestions.size() - 1);
@@ -115,7 +109,6 @@ public class InterviewAiContextBuilder {
                 questionsAlreadyAsked,
                 difficultyProgression,
                 recentConversation,
-                recentCandidatePoints,
                 consecutiveFollowUps,
                 closingMode);
     }

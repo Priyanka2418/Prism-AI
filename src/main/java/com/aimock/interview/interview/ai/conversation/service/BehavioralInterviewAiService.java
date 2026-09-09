@@ -6,17 +6,17 @@ import com.aimock.interview.interview.ai.conversation.dto.AiInterviewResponse;
 import com.aimock.interview.interview.ai.conversation.prompt.InterviewAiPromptRules;
 import com.aimock.interview.interview.commons.enums.InterviewType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class HrInterviewAiService implements InterviewAiService {
+public class BehavioralInterviewAiService implements InterviewAiService {
 
     private final GroqInterviewAiClient groqInterviewAiClient;
 
     @Override
     public InterviewType getInterviewType() {
-        return InterviewType.HR;
+        return InterviewType.BEHAVIORAL;
     }
 
     @Override
@@ -35,17 +35,26 @@ public class HrInterviewAiService implements InterviewAiService {
         return InterviewAiPromptRules.COMMON_RULES + """
 
                 ==================================================
-                INTERVIEW TYPE: HR & BEHAVIORAL
+                INTERVIEW TYPE: BEHAVIORAL
                 ==================================================
 
-                Focus on:
-                - communication and clarity of thought
-                - motivation, ownership, and career goals
-                - collaboration, conflict resolution, and empathy
-                - handling feedback, ambiguity, and high-pressure deadlines
-                - leadership, mentorship, and engineering culture
+                Focus exclusively on behavioral questions using the STAR method (Situation, Task, Action, Result):
+                - Ask the candidate to share real past experiences and concrete examples.
+                - Probe how they handled challenges, conflicts, ambiguity, or high-pressure situations.
+                - Assess soft skills: communication, ownership, adaptability, teamwork, and growth mindset.
+                - Evaluate emotional intelligence: empathy, self-awareness, and conflict resolution.
+                - Explore motivation, values, and alignment with engineering culture.
 
-                Align question depth and behavioral complexity with the candidate's target role and experience level.
+                Behavioral question guidelines:
+                - Always frame questions as "Tell me about a time when..." or "Give me an example of..."
+                - When the candidate gives a vague or surface-level answer, follow up by anchoring to STAR:
+                  e.g. "What was the specific outcome?" or "What action did YOU personally take?"
+                - Align question complexity with the candidate's experience level:
+                  * JUNIOR / INTERN: Focus on teamwork, learning from mistakes, handling feedback.
+                  * MID-LEVEL: Focus on cross-team collaboration, driving results, managing ambiguity.
+                  * SENIOR / LEAD: Focus on influence without authority, organizational change, mentoring others.
+
+                Do NOT ask technical or coding questions. This is a pure behavioral assessment.
                 """;
     }
 

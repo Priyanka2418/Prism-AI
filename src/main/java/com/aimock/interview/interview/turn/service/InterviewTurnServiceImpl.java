@@ -60,20 +60,29 @@ public class InterviewTurnServiceImpl implements InterviewTurnService {
                     "Interview must be IN_PROGRESS to start a turn");
         }
 
-        if (interviewTurnRepository.existsByInterviewId(interviewId)) {
-            throw new InvalidStateException(
-                    "Interview has already started");
+        List<InterviewTurn> existingTurns =
+                interviewTurnRepository.findByInterviewIdOrderByTurnNumberAsc(interviewId);
+        if (!existingTurns.isEmpty()) {
+            return interviewTurnMapper.toResponse(existingTurns.get(0));
         }
 
-        InterviewTurn turn = interviewTurnFactory.createOpeningQuestion(interview);
-
-        InterviewTurn savedTurn = interviewTurnRepository.save(turn);
-
-        return interviewTurnMapper.toResponse(savedTurn);
+        try {
+            InterviewTurn turn = interviewTurnFactory.createOpeningQuestion(interview);
+            InterviewTurn savedTurn = interviewTurnRepository.save(turn);
+            return interviewTurnMapper.toResponse(savedTurn);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            List<InterviewTurn> turns =
+                    interviewTurnRepository.findByInterviewIdOrderByTurnNumberAsc(interviewId);
+            if (!turns.isEmpty()) {
+                return interviewTurnMapper.toResponse(turns.get(0));
+            }
+            throw ex;
+        }
     }
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public InterviewTurnResponse submitAnswer(
             UUID interviewId,
             Long questionTurnId,
@@ -144,7 +153,7 @@ public class InterviewTurnServiceImpl implements InterviewTurnService {
                                 new ResourceNotFoundException(
                                         "Interview not found with id: " + interviewId));
 
-        if (!interviewSecurity.isOwner(interview)) {
+        if (!interviewSecurity.canAccess(interview)) {
             throw new ForbiddenException(
                     "You are not allowed to access this interview");
         }
@@ -155,6 +164,7 @@ public class InterviewTurnServiceImpl implements InterviewTurnService {
                 .map(interviewTurnMapper::toResponse)
                 .toList();
     }
+
 
 
     ///HELPER METHODS
@@ -255,7 +265,7 @@ public class InterviewTurnServiceImpl implements InterviewTurnService {
     private boolean isClosingTime(Interview interview) {
 
         LocalDateTime closingThreshold =
-                interview.getExpiresAt().minusSeconds(10);
+                interview.getExpiresAt().minusSeconds(60);
 
         return !LocalDateTime.now().isBefore(closingThreshold);
     }

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public record InterviewResponse(
         UUID id,
+        String title,
         InterviewType interviewType,
         Difficulty interviewDifficulty,
         String targetRole,

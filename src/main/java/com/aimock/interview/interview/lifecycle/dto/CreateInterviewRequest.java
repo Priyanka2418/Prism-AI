@@ -13,6 +13,8 @@ import java.util.List;
 
 public record CreateInterviewRequest(
 
+        String title,
+
         @NotNull
         InterviewType interviewType,
 

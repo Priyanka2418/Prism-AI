@@ -19,4 +19,6 @@ public interface InterviewFeedbackRepository
     boolean existsByInterviewIdAndStatus(
             UUID interviewId,
             FeedbackStatus status);
+
+    void deleteByInterviewId(UUID interviewId);
 }

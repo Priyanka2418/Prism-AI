@@ -26,7 +26,8 @@ public class TechnicalInterviewAiService implements InterviewAiService {
 
         return groqInterviewAiClient.generate(
                 buildSystemPrompt(),
-                buildUserPrompt(context)
+                buildUserPrompt(context),
+                context
         );
     }
 
@@ -35,40 +36,16 @@ public class TechnicalInterviewAiService implements InterviewAiService {
         return InterviewAiPromptRules.COMMON_RULES + """
 
                 ==================================================
-                INTERVIEW TYPE
+                INTERVIEW TYPE: TECHNICAL
                 ==================================================
-
-                This is a TECHNICAL interview.
 
                 Focus on:
+                - core concepts and practical implementation
+                - architecture and data flow
+                - APIs, databases, caching, and concurrency
+                - debugging, failure modes, and optimization trade-offs
 
-                - technical concepts
-                - implementation
-                - debugging
-                - architecture
-                - APIs
-                - databases
-                - algorithms
-                - technical problem solving
-
-                The target role provides additional context,
-                but technical interview behavior is authoritative.
-
-
-                ==================================================
-                TECHNICAL FOLLOW-UP BEHAVIOR
-                ==================================================
-
-                Prefer FOLLOW_UP when the candidate's answer
-                contains a meaningful technical detail worth exploring.
-
-                The follow-up must reference a specific technical
-                detail explicitly mentioned by the candidate.
-
-                Do not ask vague questions such as:
-
-                Instead, ask directly about the specific
-                technical detail.
+                Align question difficulty and scope strictly with the candidate's target role and experience level.
                 """;
     }
 
@@ -79,7 +56,7 @@ public class TechnicalInterviewAiService implements InterviewAiService {
 
         return """
                 ==================================================
-                INTERVIEW CONFIGURATION
+                INTERVIEW CONFIGURATION (FROM CANDIDATE FORM)
                 ==================================================
 
                 Target role:
@@ -99,7 +76,7 @@ public class TechnicalInterviewAiService implements InterviewAiService {
 
 
                 ==================================================
-                INTERVIEW PROGRESS
+                INTERVIEW PROGRESS & STATE
                 ==================================================
 
                 Covered topics:
@@ -108,16 +85,21 @@ public class TechnicalInterviewAiService implements InterviewAiService {
                 Current topic:
                 %s
 
+                Consecutive follow-ups on current topic:
+                %d (CRITICAL: If >= 1, aiAction MUST be NEW_TOPIC selecting from unvisited topics)
+
+                Closing mode active:
+                %s (If true, aiAction MUST be END_INTERVIEW with a polite closing wrap-up)
+
                 Difficulty progression:
                 %s
 
 
                 ==================================================
-                QUESTIONS ALREADY ASKED
+                QUESTIONS ALREADY ASKED (DO NOT REPEAT)
                 ==================================================
 
                 %s
-
 
                 ==================================================
                 RECENT CONVERSATION
@@ -127,14 +109,7 @@ public class TechnicalInterviewAiService implements InterviewAiService {
 
 
                 ==================================================
-                IMPORTANT RECENT CANDIDATE POINTS
-                ==================================================
-
-                %s
-
-
-                ==================================================
-                LATEST CANDIDATE ANSWER
+                LATEST CANDIDATE ANSWER (EVALUATE THIS DEEPLY)
                 ==================================================
 
                 %s
@@ -146,11 +121,14 @@ public class TechnicalInterviewAiService implements InterviewAiService {
                 interview.getTopics(),
                 context.coveredTopics(),
                 context.currentTopic(),
+                context.consecutiveFollowUps(),
+                context.closingMode(),
                 context.difficultyProgression(),
                 context.questionsAlreadyAsked(),
                 context.recentConversation(),
-                context.recentCandidatePoints(),
-                context.candidateAnswer().getContent()
+                context.candidateAnswer() != null && context.candidateAnswer().getContent() != null
+                        ? context.candidateAnswer().getContent()
+                        : "(First turn / starting interview)"
         );
     }
 }

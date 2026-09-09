@@ -19,7 +19,6 @@ public record InterviewAiContext(
         String questionsAlreadyAsked,
         String difficultyProgression,
         String recentConversation,
-        String recentCandidatePoints,
         int consecutiveFollowUps,
         boolean closingMode
 ) {

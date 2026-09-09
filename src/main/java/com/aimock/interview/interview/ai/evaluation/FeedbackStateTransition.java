@@ -37,7 +37,7 @@ public class FeedbackStateTransition {
 
         transitions.put(
                 FeedbackStatus.COMPLETED,
-                EnumSet.noneOf(FeedbackStatus.class)
+                EnumSet.of(FeedbackStatus.GENERATING)
         );
     }
 

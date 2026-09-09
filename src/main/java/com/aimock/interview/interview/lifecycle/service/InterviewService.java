@@ -3,6 +3,7 @@ package com.aimock.interview.interview.lifecycle.service;
 import com.aimock.interview.interview.lifecycle.dto.CreateInterviewRequest;
 import com.aimock.interview.interview.lifecycle.dto.InterviewResponse;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface InterviewService {
@@ -17,5 +18,11 @@ public interface InterviewService {
     InterviewResponse getInterview(
             UUID interviewId);
 
+    List<InterviewResponse> getMyInterviews();
+
+    InterviewResponse completeInterview(UUID interviewId);
+
     void completeExpiredInterviews();
+
+    void deleteInterview(UUID interviewId);
 }

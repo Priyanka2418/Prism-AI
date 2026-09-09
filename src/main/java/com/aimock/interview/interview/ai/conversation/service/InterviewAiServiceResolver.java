@@ -1,12 +1,13 @@
 package com.aimock.interview.interview.ai.conversation.service;
 
 import com.aimock.interview.interview.commons.enums.InterviewType;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class InterviewAiServiceResolver {
 
     private final Map<InterviewType, InterviewAiService> services;
@@ -26,14 +27,21 @@ public class InterviewAiServiceResolver {
     public InterviewAiService resolve(
             InterviewType interviewType) {
 
-        InterviewAiService service = services.get(interviewType);
-
-        if (service == null) {
-            throw new IllegalArgumentException(
-                    "No AI service configured for interview type: "
-                            + interviewType);
+        if (interviewType == null) {
+            return services.getOrDefault(InterviewType.TECHNICAL, services.values().iterator().next());
         }
 
-        return service;
+        InterviewAiService service = services.get(interviewType);
+
+        if (service != null) {
+            return service;
+        }
+
+        if (services.isEmpty()) {
+            throw new IllegalStateException("No InterviewAiService instances registered");
+        }
+
+        // Final fallback — should never reach here if all types have dedicated services
+        return services.getOrDefault(InterviewType.TECHNICAL, services.values().iterator().next());
     }
 }

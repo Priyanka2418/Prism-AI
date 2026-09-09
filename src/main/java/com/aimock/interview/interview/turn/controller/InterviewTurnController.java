@@ -19,7 +19,7 @@ public class InterviewTurnController {
 
     private final InterviewTurnService interviewTurnService;
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @PostMapping("/start")
     public ResponseEntity<InterviewTurnResponse> startFirstTurn(
             @PathVariable UUID interviewId) {
@@ -28,7 +28,7 @@ public class InterviewTurnController {
                 interviewTurnService.startFirstTurn(interviewId));
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @PostMapping("/{questionTurnId}/answer")
     public ResponseEntity<InterviewTurnResponse> submitAnswer(
             @PathVariable UUID interviewId,
@@ -40,7 +40,7 @@ public class InterviewTurnController {
                         interviewId, questionTurnId, request));
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<InterviewTurnResponse>> getInterviewTurns(
             @PathVariable UUID interviewId) {

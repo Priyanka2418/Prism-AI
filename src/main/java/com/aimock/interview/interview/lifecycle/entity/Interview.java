@@ -64,6 +64,12 @@ public class Interview {
     private Difficulty interviewDifficulty;
 
     @Column(
+            name = "title",
+            length = 200
+    )
+    private String title;
+
+    @Column(
             name = "target_role",
             nullable = false,
             length = 150

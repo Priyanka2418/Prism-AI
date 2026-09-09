@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,7 +20,7 @@ public class InterviewController {
 
     private final InterviewService interviewService;
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @PostMapping
     public ResponseEntity<InterviewResponse> createInterview(
             @Valid @RequestBody CreateInterviewRequest request) {
@@ -32,7 +33,7 @@ public class InterviewController {
                 .body(interview);
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @PostMapping("/{interviewId}/start")
     public ResponseEntity<InterviewResponse> startInterview(
             @PathVariable UUID interviewId) {
@@ -43,7 +44,7 @@ public class InterviewController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @PostMapping("/{interviewId}/cancel")
     public ResponseEntity<InterviewResponse> cancelInterview(
             @PathVariable UUID interviewId) {
@@ -54,11 +55,35 @@ public class InterviewController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('CANDIDATE')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<InterviewResponse>> getMyInterviews() {
+        return ResponseEntity.ok(
+                interviewService.getMyInterviews());
+    }
+
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
+    @PostMapping("/{interviewId}/complete")
+    public ResponseEntity<InterviewResponse> completeInterview(
+            @PathVariable UUID interviewId) {
+
+        return ResponseEntity.ok(
+                interviewService.completeInterview(interviewId));
+    }
+
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
     @GetMapping("/{interviewId}")
     public ResponseEntity<InterviewResponse> getInterview(
             @PathVariable UUID interviewId) {
         return ResponseEntity.ok(
                 interviewService.getInterview(interviewId));
+    }
+
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
+    @DeleteMapping("/{interviewId}")
+    public ResponseEntity<Void> deleteInterview(
+            @PathVariable UUID interviewId) {
+        interviewService.deleteInterview(interviewId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -24,9 +24,9 @@ public interface InterviewTurnRepository extends JpaRepository<InterviewTurn, Lo
 
     boolean existsByInterviewId(UUID interviewId);
 
+    void deleteByInterviewId(UUID interviewId);
 
     List<InterviewTurn> findByInterviewIdAndTurnTypeOrderByTurnNumberAsc(
             UUID interviewId,
             TurnType turnType);
-
 }
