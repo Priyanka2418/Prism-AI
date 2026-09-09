@@ -1,14 +1,33 @@
 import signup from "../assets/signup.png";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Signup() {
-  const [role, setRole] = useState("candidate");
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { signup } = useAuth();
+
+  const initialRole = searchParams.get("role")?.toLowerCase() === "mentor" ? "mentor" : "candidate";
+  const [role, setRole] = useState(initialRole);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const urlRole = searchParams.get("role")?.toLowerCase();
+    if (urlRole === "mentor" || urlRole === "candidate") {
+      setRole(urlRole);
+    }
+  }, [searchParams]);
+
+  const handleRoleChange = (newRole) => {
+    setRole(newRole);
+    setSearchParams({ role: newRole });
+    setError("");
+  };
 
   const validateForm = () => {
     if (!email.trim()) {
@@ -43,35 +62,21 @@ function Signup() {
     setError("");
     setIsSubmitting(true);
 
-    const endpoint =
-      role === "candidate"
-        ? "http://localhost:8080/api/v1/users/candidate"
-        : "http://localhost:8080/api/v1/users/mentor";
-
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: email.trim(),
-          password,
-        }),
-      });
+      await signup(email.trim(), password, role);
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Registration failed.");
+      if (role === "candidate") {
+        navigate("/candidate/onboarding");
+      } else {
+        navigate("/mentor/profile");
       }
-
-      console.log("Registration successful");
-
-      // Dashboard navigation will be added after dashboard routing is introduced.
     } catch (error) {
       console.error(error);
-      setError(error.message || "Something went wrong. Please try again.");
+      if (error.message?.includes("already registered") || error.status === 409) {
+        setError("This email is already registered. If you already have an account, please sign in.");
+      } else {
+        setError(error.message || "Registration failed. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -194,7 +199,7 @@ function Signup() {
               </div>
 
               <Link
-                to="/login"
+                to={`/login?role=${role}`}
                 className="hidden sm:block text-sm text-[#94A3B8] hover:text-[#2DD4BF] transition-colors"
               >
                 Sign In
@@ -211,7 +216,7 @@ function Signup() {
                 {/* Candidate */}
                 <button
                   type="button"
-                  onClick={() => setRole("candidate")}
+                  onClick={() => handleRoleChange("candidate")}
                   className={`text-left p-6 rounded-2xl border transition-all ${
                     role === "candidate"
                       ? "border-[#2DD4BF] bg-[#2DD4BF]/5"
@@ -246,7 +251,7 @@ function Signup() {
                 {/* Mentor */}
                 <button
                   type="button"
-                  onClick={() => setRole("mentor")}
+                  onClick={() => handleRoleChange("mentor")}
                   className={`text-left p-6 rounded-2xl border transition-all ${
                     role === "mentor"
                       ? "border-[#2DD4BF] bg-[#2DD4BF]/5"
@@ -351,7 +356,11 @@ function Signup() {
                 disabled={isSubmitting}
                 className="w-full py-4 bg-[#2DD4BF] text-[#0F172A] font-bold rounded-xl hover:shadow-[0_0_20px_rgba(45,212,191,0.35)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Creating Account..." : "Create Account"}
+                {isSubmitting
+                  ? "Creating Account..."
+                  : role === "mentor"
+                  ? "Register as Mentor"
+                  : "Register as Candidate"}
               </button>
             </form>
 
@@ -359,7 +368,7 @@ function Signup() {
             <div className="mt-8 sm:hidden text-center">
               <p className="text-sm text-[#94A3B8]">
                 Already have an account?{" "}
-                <Link to="/login" className="text-[#2DD4BF] font-bold ml-1">
+                <Link to={`/login?role=${role}`} className="text-[#2DD4BF] font-bold ml-1">
                   Sign In
                 </Link>
               </p>

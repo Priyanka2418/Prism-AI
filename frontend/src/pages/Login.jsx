@@ -1,15 +1,33 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import login from "../assets/login.png";
-import { loginUser } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
-  const [role, setRole] = useState("candidate");
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { login, logout } = useAuth();
+
+  const initialRole = searchParams.get("role")?.toLowerCase() === "mentor" ? "mentor" : "candidate";
+  const [role, setRole] = useState(initialRole);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const urlRole = searchParams.get("role")?.toLowerCase();
+    if (urlRole === "mentor" || urlRole === "candidate") {
+      setRole(urlRole);
+    }
+  }, [searchParams]);
+
+  const handleRoleChange = (newRole) => {
+    setRole(newRole);
+    setSearchParams({ role: newRole });
+    setError("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,12 +46,31 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      await loginUser(email.trim(), password);
+      const { user } = await login(email.trim(), password);
 
-      console.log("Login successful");
+      const expectedRole = role.toUpperCase(); // "CANDIDATE" or "MENTOR"
+
+      // Enforce strict role validation matching the user's selected tab
+      if (user?.role !== "ADMIN" && user?.role !== expectedRole) {
+        await logout();
+        if (expectedRole === "MENTOR") {
+          setError("This account is registered as a Candidate. Please select 'Candidate' above to sign in, or create a Mentor account.");
+        } else {
+          setError("This account is registered as a Mentor. Please select 'Mentor' above to sign in.");
+        }
+        return;
+      }
+
+      if (user?.role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (user?.role === "MENTOR") {
+        navigate("/mentor/dashboard");
+      } else {
+        navigate("/candidate/dashboard");
+      }
     } catch (error) {
       console.error(error);
-      setError(error.message || "Something went wrong. Please try again.");
+      setError(error.message || "Invalid email or password. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +147,7 @@ function Login() {
                 {/* Candidate */}
                 <button
                   type="button"
-                  onClick={() => setRole("candidate")}
+                  onClick={() => handleRoleChange("candidate")}
                   className={`py-3 px-4 rounded-xl border font-medium transition-all ${
                     role === "candidate"
                       ? "border-[#2DD4BF] bg-[#2DD4BF]/10 text-[#2DD4BF]"
@@ -124,7 +161,7 @@ function Login() {
                 {/* Mentor */}
                 <button
                   type="button"
-                  onClick={() => setRole("mentor")}
+                  onClick={() => handleRoleChange("mentor")}
                   className={`py-3 px-4 rounded-xl border font-medium transition-all ${
                     role === "mentor"
                       ? "border-[#2DD4BF] bg-[#2DD4BF]/10 text-[#2DD4BF]"
@@ -203,7 +240,11 @@ function Login() {
                 disabled={isSubmitting}
                 className="w-full py-4 bg-[#2DD4BF] text-[#0F172A] font-bold rounded-xl hover:shadow-[0_0_20px_rgba(45,212,191,0.35)] transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Signing In..." : "Sign In"}
+                {isSubmitting
+                  ? "Signing In..."
+                  : role === "mentor"
+                  ? "Sign In as Mentor"
+                  : "Sign In as Candidate"}
               </button>
             </form>
 
@@ -211,7 +252,7 @@ function Login() {
             <p className="mt-8 text-center text-sm text-[#94A3B8]">
               Don't have an account?{" "}
               <Link
-                to="/signup"
+                to={`/signup?role=${role}`}
                 className="text-[#2DD4BF] font-bold hover:underline ml-1"
               >
                 Create Account
