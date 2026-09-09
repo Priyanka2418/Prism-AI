@@ -41,13 +41,21 @@ function Navbar() {
         </a>
       </div>
 
-      {/* Sign Up */}
-      <Link
-        to="/signup"
-        className="rounded-full bg-white px-6 py-2 text-xs font-bold uppercase tracking-widest text-black transition-all hover:bg-[#00F5FF]"
-      >
-        Sign Up
-      </Link>
+      {/* Auth Actions */}
+      <div className="flex items-center gap-3">
+        <Link
+          to="/login"
+          className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-white/80 hover:text-white transition-colors"
+        >
+          Sign In
+        </Link>
+        <Link
+          to="/signup"
+          className="rounded-full bg-white px-5 py-2 text-xs font-bold uppercase tracking-widest text-black transition-all hover:bg-[#00F5FF]"
+        >
+          Get Started
+        </Link>
+      </div>
     </nav>
   );
 }
