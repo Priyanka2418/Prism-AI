@@ -1,5 +1,6 @@
-package com.aimock.interview.interview.entity;
+package com.aimock.interview.interview.transcript.entity;
 
+import com.aimock.interview.interview.turn.entity.InterviewTurn;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

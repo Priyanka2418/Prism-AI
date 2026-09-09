@@ -1,6 +1,7 @@
-package com.aimock.interview.interview.entity;
+package com.aimock.interview.interview.media.entity;
 
-import com.aimock.interview.interview.enums.MediaType;
+import com.aimock.interview.interview.commons.enums.MediaType;
+import com.aimock.interview.interview.lifecycle.entity.Interview;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
