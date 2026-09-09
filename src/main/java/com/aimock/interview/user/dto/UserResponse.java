@@ -1,4 +1,4 @@
-package com.aimock.interview.user.dto.user_response;
+package com.aimock.interview.user.dto;
 
 import com.aimock.interview.common.enums.Role;
 import com.aimock.interview.common.enums.UserStatus;

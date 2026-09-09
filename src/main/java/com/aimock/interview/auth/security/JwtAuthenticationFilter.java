@@ -31,6 +31,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println(
+                ">>> JWT FILTER: "
+                        + request.getMethod()
+                        + " "
+                        + request.getRequestURI()
+        );
+
         String token = extractAccessToken(request);
 
         if (token == null) {
@@ -79,6 +86,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractAccessToken(
             HttpServletRequest request) {
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7).trim();
+        }
 
         Cookie[] cookies = request.getCookies();
 

@@ -2,11 +2,14 @@ package com.aimock.interview.auth.service;
 
 import com.aimock.interview.auth.dto.AuthResponse;
 import com.aimock.interview.auth.dto.LoginRequest;
-import com.aimock.interview.auth.dto.RefreshTokenRequest;
+import com.aimock.interview.auth.dto.RegisterRequest;
 import com.aimock.interview.auth.entity.RefreshToken;
 import com.aimock.interview.auth.repository.RefreshTokenRepository;
 import com.aimock.interview.auth.security.JwtService;
+import com.aimock.interview.common.enums.Role;
+import com.aimock.interview.common.exception.DuplicateResourceException;
 import com.aimock.interview.user.entity.User;
+import com.aimock.interview.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -28,9 +32,45 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
+
+
+    @Override
+    public AuthResponse registerCandidate(RegisterRequest request) {
+        return registerUser(request, Role.CANDIDATE);
+    }
+
+    @Override
+    public AuthResponse registerMentor(RegisterRequest request) {
+        return registerUser(request, Role.MENTOR);
+    }
+
+    private AuthResponse registerUser(
+            RegisterRequest request,
+            Role role) {
+
+        if (userRepository.existsByEmail(request.email())) {
+            throw new DuplicateResourceException(
+                    "Email already registered"
+            );
+        }
+
+        User user = new User();
+
+        user.setEmail(request.email());
+        user.setPassword(
+                passwordEncoder.encode(request.password())
+        );
+        user.setRole(role);
+
+        User savedUser = userRepository.save(user);
+
+        return authenticate(savedUser);
+    }
 
     @Override
     public AuthResponse login(LoginRequest request) {
@@ -91,6 +131,16 @@ public class AuthServiceImpl implements AuthService {
         String accessToken =
                 jwtService.generateAccessToken(userDetails);
 
+        if (userDetails instanceof User user) {
+            return new AuthResponse(
+                    accessToken,
+                    refreshToken,
+                    user.getId(),
+                    user.getEmail(),
+                    user.getRole()
+            );
+        }
+
         return new AuthResponse(
                 accessToken,
                 refreshToken
@@ -116,7 +166,13 @@ public class AuthServiceImpl implements AuthService {
 
         refreshTokenRepository.save(refreshTokenEntity);
 
-        return new AuthResponse(accessToken, refreshToken);
+        return new AuthResponse(
+                accessToken,
+                refreshToken,
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 
     @Override

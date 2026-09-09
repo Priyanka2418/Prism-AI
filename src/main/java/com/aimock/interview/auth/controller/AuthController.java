@@ -2,6 +2,7 @@ package com.aimock.interview.auth.controller;
 
 import com.aimock.interview.auth.dto.AuthResponse;
 import com.aimock.interview.auth.dto.LoginRequest;
+import com.aimock.interview.auth.dto.RegisterRequest;
 import com.aimock.interview.auth.security.AuthCookieService;
 import com.aimock.interview.auth.service.AuthService;
 import com.aimock.interview.user.entity.User;
@@ -26,8 +27,54 @@ public class AuthController {
     private final AuthService authService;
     private final AuthCookieService authCookieService;
 
+    @PostMapping("/register/candidate")
+    public ResponseEntity<AuthResponse> registerCandidate(
+            @Valid @RequestBody RegisterRequest request,
+            HttpServletResponse response) {
+
+        AuthResponse authResponse =
+                authService.registerCandidate(request);
+
+        authCookieService.addAccessTokenCookie(
+                response,
+                authResponse.getAccessToken()
+        );
+
+        authCookieService.addRefreshTokenCookie(
+                response,
+                authResponse.getRefreshToken()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authResponse);
+    }
+
+    @PostMapping("/register/mentor")
+    public ResponseEntity<AuthResponse> registerMentor(
+            @Valid @RequestBody RegisterRequest request,
+            HttpServletResponse response) {
+
+        AuthResponse authResponse =
+                authService.registerMentor(request);
+
+        authCookieService.addAccessTokenCookie(
+                response,
+                authResponse.getAccessToken()
+        );
+
+        authCookieService.addRefreshTokenCookie(
+                response,
+                authResponse.getRefreshToken()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authResponse);
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response) {
 
@@ -39,11 +86,11 @@ public class AuthController {
         authCookieService.addRefreshTokenCookie(
                 response, authResponse.getRefreshToken());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<Void> refresh(
+    public ResponseEntity<AuthResponse> refresh(
             HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -79,7 +126,7 @@ public class AuthController {
                 authResponse.getRefreshToken()
         );
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/logout")

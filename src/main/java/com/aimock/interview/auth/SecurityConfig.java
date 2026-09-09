@@ -36,25 +36,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
 
-        CookieCsrfTokenRepository csrfTokenRepository =
-                CookieCsrfTokenRepository.withHttpOnlyFalse();
-
-        CsrfTokenRequestAttributeHandler csrfTokenRequestHandler =
-                new CsrfTokenRequestAttributeHandler();
-
-        csrfTokenRequestHandler.setCsrfRequestAttributeName(null);
-
         http
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(csrfTokenRepository)
-                        .csrfTokenRequestHandler(csrfTokenRequestHandler)
-                        // Your existing public POST endpoints
-                        .ignoringRequestMatchers(
-                                "/api/v1/users/candidate",
-                                "/api/v1/users/mentor",
-                                "/api/v1/auth/login"
-                        )
-                )
+                .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session ->
@@ -69,13 +52,9 @@ public class SecurityConfig {
                         // Public authentication endpoints
                         .requestMatchers(
                                 "/api/v1/auth/login",
+                                "/api/v1/auth/register/candidate",
+                                "/api/v1/auth/register/mentor",
                                 "/api/v1/auth/refresh"
-                        ).permitAll()
-
-                        // Public registration endpoints
-                        .requestMatchers(
-                                "/api/v1/users/candidate",
-                                "/api/v1/users/mentor"
                         ).permitAll()
 
                         // Swagger
@@ -86,7 +65,21 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // WebSocket handshake
-                        .requestMatchers("/ws").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+
+                        // Error endpoint (prevents Tomcat forward from being masked as 401)
+                        .requestMatchers("/error").permitAll()
+
+                        // Current authenticated user
+                        .requestMatchers("/api/v1/users/me")
+                        .hasAnyRole("CANDIDATE", "MENTOR", "ADMIN")
+
+                        // Admin-only user management
+                        .requestMatchers("/api/v1/users")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/v1/users/**")
+                        .hasRole("ADMIN")
 
                         // Everything else requires authentication
                         .anyRequest().authenticated())
@@ -129,8 +122,8 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+        configuration.setAllowedOriginPatterns(
+                List.of("*")
         );
 
         configuration.setAllowedMethods(
@@ -145,10 +138,11 @@ public class SecurityConfig {
         );
 
         configuration.setAllowedHeaders(
-                List.of(
-                        "Content-Type",
-                        "X-XSRF-TOKEN"
-                )
+                List.of("*")
+        );
+
+        configuration.setExposedHeaders(
+                List.of("Set-Cookie", "Authorization")
         );
 
         configuration.setAllowCredentials(true);
