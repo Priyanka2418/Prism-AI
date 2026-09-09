@@ -53,7 +53,7 @@ public class MentorRequest {
     )
     private MentorProfile mentor;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interview_id")
     private Interview interview;
 

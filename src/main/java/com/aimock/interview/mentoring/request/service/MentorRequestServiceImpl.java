@@ -49,8 +49,14 @@ public class MentorRequestServiceImpl implements MentorRequestService {
 
         CandidateProfile candidateProfile =
                 candidateProfileRepository.findByUserId(currentUser.getId())
-                        .orElseThrow(() -> new ResourceNotFoundException(
-                                        "Candidate profile not found"));
+                        .orElseGet(() -> {
+                            CandidateProfile profile = new CandidateProfile();
+                            profile.setUser(currentUser);
+                            String email = currentUser.getEmail();
+                            String name = email.contains("@") ? email.split("@")[0] : "Candidate";
+                            profile.setDisplayName(name.substring(0, 1).toUpperCase() + (name.length() > 1 ? name.substring(1) : ""));
+                            return candidateProfileRepository.save(profile);
+                        });
 
         MentorProfile mentorProfile =
                 mentorProfileRepository.findById(mentorId)
@@ -60,13 +66,15 @@ public class MentorRequestServiceImpl implements MentorRequestService {
 
         validateMentor(mentorProfile);
 
-        Interview interview =
-                interviewRepository.findById(request.interviewId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Interview not found"));
+        Interview interview = null;
+        if (request.interviewId() != null) {
+            interview = interviewRepository.findById(request.interviewId())
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Interview not found"));
 
-        validateInterviewOwnership(interview, candidateProfile);
+            validateInterviewOwnership(interview, candidateProfile);
+        }
 
         MentorRequest mentorRequest =
                 mentorRequestMapper.toEntity(request);
@@ -88,9 +96,14 @@ public class MentorRequestServiceImpl implements MentorRequestService {
 
         CandidateProfile candidateProfile =
                 candidateProfileRepository.findByUserId(currentUser.getId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Candidate profile not found"));
+                        .orElseGet(() -> {
+                            CandidateProfile profile = new CandidateProfile();
+                            profile.setUser(currentUser);
+                            String email = currentUser.getEmail();
+                            String name = email.contains("@") ? email.split("@")[0] : "Candidate";
+                            profile.setDisplayName(name.substring(0, 1).toUpperCase() + (name.length() > 1 ? name.substring(1) : ""));
+                            return candidateProfileRepository.save(profile);
+                        });
 
         return mentorRequestRepository
                 .findByStudentId(candidateProfile.getId())

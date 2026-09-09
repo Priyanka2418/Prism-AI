@@ -16,4 +16,5 @@ public interface MentorSessionService {
 
     MentorSessionResponse getSession(UUID sessionId);
 
+    void deleteSession(UUID sessionId);
 }

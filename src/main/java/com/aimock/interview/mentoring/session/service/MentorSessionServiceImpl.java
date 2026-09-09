@@ -13,6 +13,7 @@ import com.aimock.interview.mentoring.session.entity.MentorSession;
 import com.aimock.interview.mentoring.session.common.SessionStatus;
 import com.aimock.interview.mentoring.session.common.MentorSessionMapper;
 import com.aimock.interview.mentoring.session.repository.MentorSessionRepository;
+import com.aimock.interview.mentoring.chat.repository.ChatMessageRepository;
 import com.aimock.interview.profile.candidate.entity.CandidateProfile;
 import com.aimock.interview.profile.candidate.repository.CandidateProfileRepository;
 import com.aimock.interview.profile.mentor.entity.MentorProfile;
@@ -32,6 +33,7 @@ public class MentorSessionServiceImpl implements MentorSessionService{
 
     private final MentorSessionRepository mentorSessionRepository;
     private final MentorRequestRepository mentorRequestRepository;
+    private final ChatMessageRepository chatMessageRepository;
     private final SecurityUtils securityUtils;
     private final MentorSessionMapper mentorSessionMapper;
     private final CandidateProfileRepository candidateProfileRepository;
@@ -156,6 +158,35 @@ public class MentorSessionServiceImpl implements MentorSessionService{
         return mentorSessionMapper.toResponse(
                 mentorSession,
                 otherParticipantName);
+    }
+
+    @Override
+    @Transactional
+    public void deleteSession(UUID sessionId) {
+
+        MentorSession mentorSession =
+                mentorSessionRepository.findById(sessionId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Mentor session not found"));
+
+        User currentUser = securityUtils.getCurrentUser();
+
+        MentorRequest mentorRequest = mentorSession.getMentorRequest();
+
+        UUID studentUserId = mentorRequest.getStudent().getUser().getId();
+        UUID mentorUserId = mentorRequest.getMentor().getUser().getId();
+        UUID currentUserId = currentUser.getId();
+
+        if (!currentUserId.equals(studentUserId) && !currentUserId.equals(mentorUserId)) {
+            throw new ForbiddenException("You are not authorized to delete this mentoring session");
+        }
+
+        // Delete all chat messages associated with this session first
+        chatMessageRepository.deleteByMentorSessionId(sessionId);
+
+        // Delete the session record
+        mentorSessionRepository.delete(mentorSession);
     }
 
 }

@@ -11,6 +11,8 @@ import java.util.UUID;
 @Setter
 public class MentorPublicProfileResponse {
 
+    private UUID id;
+
     private String displayName;
 
     private String company;

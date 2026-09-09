@@ -44,4 +44,13 @@ public class MentorSessionController {
         return ResponseEntity.ok(
                 mentorSessionService.getSession(sessionId));
     }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/{sessionId}")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'MENTOR', 'ADMIN')")
+    public ResponseEntity<Void> deleteSession(
+            @PathVariable UUID sessionId) {
+
+        mentorSessionService.deleteSession(sessionId);
+        return ResponseEntity.noContent().build();
+    }
 }

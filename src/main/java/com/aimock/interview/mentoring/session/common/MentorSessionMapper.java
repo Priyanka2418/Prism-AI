@@ -10,7 +10,7 @@ public interface MentorSessionMapper {
 
     @Mapping(
             target = "interviewId",
-            expression = "java(mentorSession.getMentorRequest().getInterview().getId())"
+            expression = "java(mentorSession.getMentorRequest().getInterview() != null ? mentorSession.getMentorRequest().getInterview().getId() : null)"
     )
     @Mapping(
             target = "otherParticipantName",

@@ -11,7 +11,6 @@ import java.util.UUID;
 
 public record CreateMentorRequest(
 
-        @NotNull(message = "Interview ID is required")
         UUID interviewId,
 
         @NotNull(message = "Requested start time is required")
