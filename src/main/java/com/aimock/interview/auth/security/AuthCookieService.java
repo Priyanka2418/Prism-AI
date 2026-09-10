@@ -16,6 +16,12 @@ public class AuthCookieService {
     private static final String REFRESH_TOKEN_COOKIE =
             "refresh_token";
 
+    @Value("${cookie.secure}")
+    private boolean cookieSecure;
+
+    @Value("${cookie.same-site}")
+    private String cookieSameSite;
+
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
@@ -29,8 +35,8 @@ public class AuthCookieService {
                                 accessToken
                         )
                         .httpOnly(true)
-                        .secure(false)
-                        .sameSite("Lax")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/")
                         .build();
 
@@ -50,8 +56,8 @@ public class AuthCookieService {
                                 refreshToken
                         )
                         .httpOnly(true)
-                        .secure(false)
-                        .sameSite("Lax")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/api/v1/auth/refresh")
                         .maxAge(
                                 Duration.ofMillis(
@@ -75,8 +81,8 @@ public class AuthCookieService {
                                 ""
                         )
                         .httpOnly(true)
-                        .secure(false)
-                        .sameSite("Lax")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/")
                         .maxAge(0)
                         .build();
@@ -87,8 +93,8 @@ public class AuthCookieService {
                                 ""
                         )
                         .httpOnly(true)
-                        .secure(false)
-                        .sameSite("Lax")
+                        .secure(cookieSecure)
+                        .sameSite(cookieSameSite)
                         .path("/api/v1/auth/refresh")
                         .maxAge(0)
                         .build();
