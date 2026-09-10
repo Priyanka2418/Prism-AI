@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import java.time.ZoneId;
 
 import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
+
 public class MentorSessionScheduler {
 
     private final MentorSessionRepository mentorSessionRepository;
@@ -20,7 +22,8 @@ public class MentorSessionScheduler {
     @Transactional
     public void updateSessionStatuses() {
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now =
+                LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
 
         log.info("Mentor session scheduler running at {}", now);
 
