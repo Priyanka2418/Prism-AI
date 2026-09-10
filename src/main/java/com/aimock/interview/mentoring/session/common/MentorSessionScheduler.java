@@ -22,16 +22,22 @@ public class MentorSessionScheduler {
 
         LocalDateTime now = LocalDateTime.now();
 
+        log.info("Mentor session scheduler running at {}", now);
+
         mentorSessionRepository
                 .findByStatusAndScheduledStartAtLessThanEqual(
                         SessionStatus.UPCOMING, now)
-                .forEach(session ->
-                        session.transitionTo(SessionStatus.IN_PROGRESS));
+                .forEach(session -> {
+                    log.info("Starting mentor session {}", session.getId());
+                    session.transitionTo(SessionStatus.IN_PROGRESS);
+                });
 
         mentorSessionRepository
                 .findByStatusAndScheduledEndAtLessThanEqual(
                         SessionStatus.IN_PROGRESS, now)
-                .forEach(session ->
-                        session.transitionTo(SessionStatus.COMPLETED));
+                .forEach(session -> {
+                    log.info("Completing mentor session {}", session.getId());
+                    session.transitionTo(SessionStatus.COMPLETED);
+                });
     }
 }
