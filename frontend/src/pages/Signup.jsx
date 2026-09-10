@@ -1,4 +1,3 @@
-import signup from "../assets/signup.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -92,18 +91,13 @@ function Signup() {
       </div>
 
       {/* Main Signup Card */}
-      <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 bg-[#1E293B] border border-[#334155] rounded-3xl overflow-hidden shadow-2xl">
-        {/* LEFT SIDE */}
-        <div className="hidden lg:flex lg:col-span-4 flex-col justify-between p-12 bg-[#0F172A]/50 relative overflow-hidden">
-          {/* Background image */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <img src={signup} alt="" className="w-full h-full object-cover" />
-          </div>
-
+      <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 bg-[#1E293B] border border-[#334155] rounded-3xl overflow-hidden shadow-2xl">
+        {/* LEFT SIDE (Image-free sleek branding) */}
+        <div className="hidden md:flex md:col-span-5 lg:col-span-5 flex-col justify-between p-8 lg:p-10 bg-[#0F172A]/80 border-r border-[#334155] relative overflow-hidden">
           {/* Content */}
-          <div className="relative z-20">
+          <div>
             {/* Brand */}
-            <div className="flex items-center gap-3 mb-12">
+            <div className="flex items-center gap-3 mb-8">
               <div className="w-9 h-9 rounded-lg bg-[#2DD4BF] flex items-center justify-center">
                 <i className="fa-solid fa-bolt text-[#0F172A]" />
               </div>
@@ -111,48 +105,52 @@ function Signup() {
               <span className="text-xl font-bold tracking-tight">Prism.AI</span>
             </div>
 
+            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3">
+              Join the Next Generation of Interview Prep
+            </h2>
+            <p className="text-sm text-[#94A3B8] leading-relaxed mb-8">
+              Create your account to start practicing with AI or mentoring aspiring candidates.
+            </p>
+
             {/* Benefits */}
-            <div className="space-y-8">
+            <div className="space-y-5">
               {/* Benefit 1 */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 shrink-0 rounded-full bg-[#2DD4BF]/10 border border-[#2DD4BF]/20 flex items-center justify-center">
-                  <i className="fa-solid fa-check text-[#2DD4BF] text-sm" />
+              <div className="flex gap-3.5">
+                <div className="w-9 h-9 shrink-0 rounded-full bg-[#2DD4BF]/10 border border-[#2DD4BF]/20 flex items-center justify-center">
+                  <i className="fa-solid fa-check text-[#2DD4BF] text-xs" />
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-1">AI Mock Interviews</h4>
-
-                  <p className="text-sm text-[#94A3B8]">
+                  <h4 className="font-bold text-sm mb-0.5">AI Mock Interviews</h4>
+                  <p className="text-xs text-[#94A3B8]">
                     Practice anytime with realistic AI-powered interviews.
                   </p>
                 </div>
               </div>
 
               {/* Benefit 2 */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 shrink-0 rounded-full bg-[#2DD4BF]/10 border border-[#2DD4BF]/20 flex items-center justify-center">
-                  <i className="fa-solid fa-check text-[#2DD4BF] text-sm" />
+              <div className="flex gap-3.5">
+                <div className="w-9 h-9 shrink-0 rounded-full bg-[#2DD4BF]/10 border border-[#2DD4BF]/20 flex items-center justify-center">
+                  <i className="fa-solid fa-check text-[#2DD4BF] text-xs" />
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-1">Instant Feedback</h4>
-
-                  <p className="text-sm text-[#94A3B8]">
+                  <h4 className="font-bold text-sm mb-0.5">Instant Feedback</h4>
+                  <p className="text-xs text-[#94A3B8]">
                     Understand your performance and identify areas to improve.
                   </p>
                 </div>
               </div>
 
               {/* Benefit 3 */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 shrink-0 rounded-full bg-[#2DD4BF]/10 border border-[#2DD4BF]/20 flex items-center justify-center">
-                  <i className="fa-solid fa-check text-[#2DD4BF] text-sm" />
+              <div className="flex gap-3.5">
+                <div className="w-9 h-9 shrink-0 rounded-full bg-[#2DD4BF]/10 border border-[#2DD4BF]/20 flex items-center justify-center">
+                  <i className="fa-solid fa-check text-[#2DD4BF] text-xs" />
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-1">Expert Mentorship</h4>
-
-                  <p className="text-sm text-[#94A3B8]">
+                  <h4 className="font-bold text-sm mb-0.5">Expert Mentorship</h4>
+                  <p className="text-xs text-[#94A3B8]">
                     Connect with experienced mentors for personalized guidance.
                   </p>
                 </div>
@@ -161,32 +159,15 @@ function Signup() {
           </div>
 
           {/* Bottom Quote */}
-          <div className="relative z-20 p-6 rounded-2xl bg-[#1E293B]/80 border border-[#334155] backdrop-blur-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#2DD4BF]/10 flex items-center justify-center">
-                <i className="fa-solid fa-user text-[#2DD4BF]" />
-              </div>
-
-              <div>
-                <p className="text-sm font-bold">
-                  Your next opportunity starts here.
-                </p>
-
-                <p className="text-xs text-[#94A3B8]">
-                  Practice. Improve. Succeed.
-                </p>
-              </div>
-            </div>
-
-            <p className="text-sm italic text-slate-300">
-              "The best way to prepare for an interview is to practice before
-              the real one."
+          <div className="mt-8 p-5 rounded-2xl bg-[#1E293B]/80 border border-[#334155]">
+            <p className="text-xs italic text-slate-300 leading-relaxed">
+              "The best way to prepare for an interview is to practice before the real one."
             </p>
           </div>
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="lg:col-span-8 p-8 md:p-16">
+        <div className="md:col-span-7 lg:col-span-7 p-8 md:p-12 lg:p-16">
           <div className="max-w-2xl mx-auto">
             {/* Header */}
             <div className="flex justify-between items-start mb-10">

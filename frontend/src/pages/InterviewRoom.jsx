@@ -43,6 +43,7 @@ export default function InterviewRoom() {
   // Timer
   const [secondsRemaining, setSecondsRemaining] = useState(null);
   const [answerDurationSeconds, setAnswerDurationSeconds] = useState(0);
+  const expiresAtMsRef = useRef(null);
 
   // Drawer
   const [showHistory, setShowHistory] = useState(false);
@@ -108,7 +109,11 @@ export default function InterviewRoom() {
     async function startCamera() {
       if (!cameraEnabled) {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-          mediaRecorderRef.current.stop();
+          try {
+            mediaRecorderRef.current.stop();
+          } catch (e) {
+            console.warn(e);
+          }
         }
         setIsRecording(false);
         if (streamRef.current) {
@@ -174,7 +179,11 @@ export default function InterviewRoom() {
 
     return () => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
+        try {
+          mediaRecorderRef.current.stop();
+        } catch (e) {
+          console.warn(e);
+        }
       }
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
@@ -206,15 +215,13 @@ export default function InterviewRoom() {
 
         setInterview(session);
 
-        // Calculate timer synchronized with expiresAt
-        if (session.expiresAt) {
-          const expiresMs = new Date(session.expiresAt).getTime();
-          const nowMs = Date.now();
-          const remainingSecs = Math.max(0, Math.floor((expiresMs - nowMs) / 1000));
-          setSecondsRemaining(remainingSecs);
-        } else if (session.durationMinutes) {
-          setSecondsRemaining(session.durationMinutes * 60);
-        }
+        // Calculate countdown based on the interview's configured durationMinutes
+        const configuredMinutes = Number(session.durationMinutes) > 0 ? Number(session.durationMinutes) : 15;
+        const totalDurationSeconds = configuredMinutes * 60;
+
+        // Set expiration reference from now for the active session duration
+        expiresAtMsRef.current = Date.now() + totalDurationSeconds * 1000;
+        setSecondsRemaining(totalDurationSeconds);
 
         // Fetch turns
         let existingTurns = await getInterviewTurns(interviewId);
@@ -258,21 +265,29 @@ export default function InterviewRoom() {
   };
 
   // Steady Timer Tick
+  const timerFinishedRef = useRef(false);
+
   useEffect(() => {
+    if (loading || !expiresAtMsRef.current) {
+      return;
+    }
+
     const interval = setInterval(() => {
-      setSecondsRemaining((prev) => {
-        if (prev === null) return null;
-        if (prev <= 1) {
-          clearInterval(interval);
-          handleTimerAutoFinish();
-          return 0;
-        }
-        return prev - 1;
-      });
+      const remaining = Math.max(0, Math.floor((expiresAtMsRef.current - Date.now()) / 1000));
+      setSecondsRemaining(remaining);
       setAnswerDurationSeconds((prev) => prev + 1);
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        if (!timerFinishedRef.current) {
+          timerFinishedRef.current = true;
+          handleTimerAutoFinish();
+        }
+      }
     }, 1000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [loading]);
 
   const toggleMic = () => {
     if (!recognitionRef.current) {
@@ -292,6 +307,14 @@ export default function InterviewRoom() {
     return new Promise((resolve) => {
       const recorder = mediaRecorderRef.current;
       if (recorder && recorder.state !== "inactive") {
+        try {
+          if (recorder.state === "recording") {
+            recorder.requestData();
+          }
+        } catch (e) {
+          console.warn(e);
+        }
+
         recorder.onstop = async () => {
           try {
             if (recordedChunksRef.current.length > 0) {
@@ -452,7 +475,7 @@ export default function InterviewRoom() {
         <div className="flex items-center gap-4">
           <div className="px-3.5 py-1.5 rounded-full bg-[#1E293B] border border-[#334155] flex items-center gap-2 text-sm font-mono font-bold text-[#2DD4BF]">
             <i className="fa-solid fa-clock text-xs" />
-            <span>{formatTimer(secondsRemaining)}</span>
+            <span>Time Remaining: {formatTimer(secondsRemaining)}</span>
           </div>
         </div>
 
@@ -661,7 +684,7 @@ export default function InterviewRoom() {
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#94A3B8] mb-2 flex items-center justify-between">
                   <span>Your Answer</span>
                   <span className="font-mono text-[#2DD4BF]">
-                    Duration: {answerDurationSeconds}s
+                    Response Time: {answerDurationSeconds}s
                   </span>
                 </label>
 

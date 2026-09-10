@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import login from "../assets/login.png";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -8,7 +7,11 @@ function Login() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { login, logout } = useAuth();
 
-  const initialRole = searchParams.get("role")?.toLowerCase() === "mentor" ? "mentor" : "candidate";
+  const initialRole = searchParams.get("role")?.toLowerCase() === "mentor"
+    ? "mentor"
+    : searchParams.get("role")?.toLowerCase() === "admin"
+    ? "admin"
+    : "candidate";
   const [role, setRole] = useState(initialRole);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +21,7 @@ function Login() {
 
   useEffect(() => {
     const urlRole = searchParams.get("role")?.toLowerCase();
-    if (urlRole === "mentor" || urlRole === "candidate") {
+    if (urlRole === "mentor" || urlRole === "candidate" || urlRole === "admin") {
       setRole(urlRole);
     }
   }, [searchParams]);
@@ -48,22 +51,28 @@ function Login() {
     try {
       const { user } = await login(email.trim(), password);
 
-      const expectedRole = role.toUpperCase(); // "CANDIDATE" or "MENTOR"
+      const expectedRole = role.toUpperCase(); // "CANDIDATE", "MENTOR", or "ADMIN"
+      const actualRole = user?.role;
 
-      // Enforce strict role validation matching the user's selected tab
-      if (user?.role !== "ADMIN" && user?.role !== expectedRole) {
+      // Strict role enforcement: user must login through their assigned role tab
+      if (actualRole !== expectedRole) {
         await logout();
-        if (expectedRole === "MENTOR") {
-          setError("This account is registered as a Candidate. Please select 'Candidate' above to sign in, or create a Mentor account.");
+
+        if (actualRole === "ADMIN") {
+          setError("This account is registered as an Administrator. Please select the 'Admin' tab above to sign in.");
+        } else if (actualRole === "MENTOR") {
+          setError("This account is registered as a Mentor. Please select the 'Mentor' tab above to sign in.");
+        } else if (actualRole === "CANDIDATE") {
+          setError("This account is registered as a Candidate. Please select the 'Candidate' tab above to sign in.");
         } else {
-          setError("This account is registered as a Mentor. Please select 'Mentor' above to sign in.");
+          setError("Invalid role for this account. Please sign in with your designated role.");
         }
         return;
       }
 
-      if (user?.role === "ADMIN") {
+      if (actualRole === "ADMIN") {
         navigate("/admin/dashboard");
-      } else if (user?.role === "MENTOR") {
+      } else if (actualRole === "MENTOR") {
         navigate("/mentor/dashboard");
       } else {
         navigate("/candidate/dashboard");
@@ -87,17 +96,12 @@ function Login() {
 
       {/* Main Login Card */}
       <div className="relative z-10 w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-[#1E293B] border border-[#334155] rounded-3xl overflow-hidden shadow-2xl">
-        {/* LEFT SIDE */}
-        <div className="hidden md:flex flex-col justify-between p-12 bg-[#0F172A]/50 relative overflow-hidden">
-          {/* Background image */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <img src={login} alt="" className="w-full h-full object-cover" />
-          </div>
-
-          {/* Left content */}
-          <div className="relative z-20">
+        {/* LEFT SIDE (Image-free sleek branding) */}
+        <div className="hidden md:flex flex-col justify-between p-10 lg:p-12 bg-[#0F172A]/80 border-r border-[#334155] relative overflow-hidden">
+          {/* Top content */}
+          <div>
             {/* Brand */}
-            <div className="flex items-center gap-3 mb-12">
+            <div className="flex items-center gap-3 mb-8">
               <div className="w-9 h-9 rounded-lg bg-[#2DD4BF] flex items-center justify-center">
                 <i className="fa-solid fa-bolt text-[#0F172A]" />
               </div>
@@ -106,21 +110,54 @@ function Login() {
             </div>
 
             {/* Heading */}
-            <h1 className="text-4xl font-bold leading-tight mb-6">
+            <h1 className="text-3xl lg:text-4xl font-bold leading-tight mb-4">
               Welcome back to the future of{" "}
               <span className="text-[#2DD4BF]">interviewing.</span>
             </h1>
 
-            <p className="text-[#94A3B8] text-lg leading-relaxed">
+            <p className="text-[#94A3B8] text-sm lg:text-base leading-relaxed mb-8">
               Access your personalized dashboard, track your progress, and
               prepare with AI-powered precision.
             </p>
+
+            {/* Feature highlights */}
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-[#1E293B]/70 border border-[#334155] flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-[#2DD4BF]/10 text-[#2DD4BF] flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-microchip text-sm" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">AI-Powered Simulations</h4>
+                  <p className="text-[11px] text-[#94A3B8]">Realistic interview turns tailored to your exact tech stack.</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#1E293B]/70 border border-[#334155] flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-chart-line text-sm" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">In-Depth Feedback Reports</h4>
+                  <p className="text-[11px] text-[#94A3B8]">Turn-by-turn analysis of answers, strengths, and areas to grow.</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#1E293B]/70 border border-[#334155] flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                  <i className="fa-solid fa-handshake-angle text-sm" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-white">Verified Mentor Network</h4>
+                  <p className="text-[11px] text-[#94A3B8]">Connect 1-on-1 with industry leaders for mock reviews and guidance.</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Bottom text */}
-          <div className="relative z-20">
-            <p className="text-sm text-[#94A3B8]">
-              Practice smarter. Interview better.
+          <div className="pt-6 border-t border-[#334155]/60 mt-8">
+            <p className="text-xs text-[#94A3B8]">
+              Practice smarter. Interview better. Powered by Prism.AI.
             </p>
           </div>
         </div>
@@ -129,7 +166,7 @@ function Login() {
         <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
           <div className="max-w-md w-full mx-auto">
             {/* Header */}
-            <div className="mb-10">
+            <div className="mb-8">
               <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
 
               <p className="text-[#94A3B8]">
@@ -139,22 +176,22 @@ function Login() {
 
             {/* Role Selection */}
             <div className="mb-8">
-              <p className="text-sm font-bold uppercase tracking-widest text-[#94A3B8] mb-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#94A3B8] mb-3">
                 Sign in as:
               </p>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {/* Candidate */}
                 <button
                   type="button"
                   onClick={() => handleRoleChange("candidate")}
-                  className={`py-3 px-4 rounded-xl border font-medium transition-all ${
+                  className={`py-3 px-2 rounded-xl border font-medium text-xs transition-all flex items-center justify-center gap-1.5 ${
                     role === "candidate"
                       ? "border-[#2DD4BF] bg-[#2DD4BF]/10 text-[#2DD4BF]"
                       : "border-[#334155] bg-[#0F172A] text-[#94A3B8] hover:border-[#2DD4BF]/40"
                   }`}
                 >
-                  <i className="fa-solid fa-user-graduate mr-2" />
+                  <i className="fa-solid fa-user-graduate text-xs" />
                   Candidate
                 </button>
 
@@ -162,20 +199,34 @@ function Login() {
                 <button
                   type="button"
                   onClick={() => handleRoleChange("mentor")}
-                  className={`py-3 px-4 rounded-xl border font-medium transition-all ${
+                  className={`py-3 px-2 rounded-xl border font-medium text-xs transition-all flex items-center justify-center gap-1.5 ${
                     role === "mentor"
                       ? "border-[#2DD4BF] bg-[#2DD4BF]/10 text-[#2DD4BF]"
                       : "border-[#334155] bg-[#0F172A] text-[#94A3B8] hover:border-[#2DD4BF]/40"
                   }`}
                 >
-                  <i className="fa-solid fa-chalkboard-user mr-2" />
+                  <i className="fa-solid fa-chalkboard-user text-xs" />
                   Mentor
+                </button>
+
+                {/* Admin */}
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange("admin")}
+                  className={`py-3 px-2 rounded-xl border font-medium text-xs transition-all flex items-center justify-center gap-1.5 ${
+                    role === "admin"
+                      ? "border-rose-400 bg-rose-500/15 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.25)]"
+                      : "border-[#334155] bg-[#0F172A] text-[#94A3B8] hover:border-rose-400/40"
+                  }`}
+                >
+                  <i className="fa-solid fa-shield-halved text-xs text-rose-400" />
+                  Admin
                 </button>
               </div>
             </div>
 
             {/* Login Form */}
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
               {/* Email */}
               <div>
                 <label
@@ -190,7 +241,7 @@ function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={role === "admin" ? "admin@aimock.com" : "you@example.com"}
                   className="w-full px-4 py-3 rounded-xl bg-[#0F172A] border border-[#334155] text-white placeholder:text-[#94A3B8]/60 outline-none transition-all focus:border-[#2DD4BF] focus:ring-2 focus:ring-[#2DD4BF]/10"
                 />
               </div>
@@ -232,19 +283,43 @@ function Login() {
               </div>
 
               {/* Error message */}
-              {error && <p className="text-sm text-red-400">{error}</p>}
+              {error && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+                  {error}
+                </div>
+              )}
 
               {/* Submit */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-[#2DD4BF] text-[#0F172A] font-bold rounded-xl hover:shadow-[0_0_20px_rgba(45,212,191,0.35)] transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                className={`w-full py-4 font-bold rounded-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                  role === "admin"
+                    ? "bg-rose-500 text-white hover:bg-rose-600 hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]"
+                    : "bg-[#2DD4BF] text-[#0F172A] hover:shadow-[0_0_20px_rgba(45,212,191,0.35)]"
+                }`}
               >
-                {isSubmitting
-                  ? "Signing In..."
-                  : role === "mentor"
-                  ? "Sign In as Mentor"
-                  : "Sign In as Candidate"}
+                {isSubmitting ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin" />
+                    <span>Signing In...</span>
+                  </>
+                ) : role === "admin" ? (
+                  <>
+                    <i className="fa-solid fa-shield-halved" />
+                    <span>Sign In as Admin</span>
+                  </>
+                ) : role === "mentor" ? (
+                  <>
+                    <i className="fa-solid fa-chalkboard-user" />
+                    <span>Sign In as Mentor</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-user-graduate" />
+                    <span>Sign In as Candidate</span>
+                  </>
+                )}
               </button>
             </form>
 
@@ -252,7 +327,7 @@ function Login() {
             <p className="mt-8 text-center text-sm text-[#94A3B8]">
               Don't have an account?{" "}
               <Link
-                to={`/signup?role=${role}`}
+                to={`/signup?role=${role === "admin" ? "candidate" : role}`}
                 className="text-[#2DD4BF] font-bold hover:underline ml-1"
               >
                 Create Account

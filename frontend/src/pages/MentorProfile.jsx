@@ -104,8 +104,8 @@ export default function MentorProfile() {
         setHasProfile(true);
       }
 
-      // Update public profile
-      const publicResponse = await updateMentorPublicProfile({
+      // Update public profile & credentials
+      await updateMentorPublicProfile({
         displayName: displayName.trim(),
         company: company.trim(),
         jobTitle: jobTitle.trim(),
@@ -117,7 +117,15 @@ export default function MentorProfile() {
         profileImageUrl: profileImageUrl.trim() || null,
       });
 
-      setMessage("Mentor profile saved successfully!");
+      // Refresh mentor profile in auth context to reflect pending status
+      try {
+        const freshProfile = await getMentorProfile();
+        setMentorProfile(freshProfile);
+      } catch (e) {
+        console.warn("Could not reload fresh profile:", e);
+      }
+
+      setMessage("Mentor profile saved successfully! Submitted for admin verification.");
       setTimeout(() => navigate("/mentor/dashboard"), 1200);
     } catch (err) {
       console.error(err);

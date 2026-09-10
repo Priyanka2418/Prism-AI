@@ -153,12 +153,14 @@ export default function CandidateMentoring() {
                       </span>
                       <span className="text-xs text-[#94A3B8] flex items-center gap-1.5">
                         <i className="fa-solid fa-clock" />
-                        {new Date(session.scheduledStartAt).toLocaleDateString(undefined, {
+                        {new Date(session.scheduledStartAt).toLocaleString("en-IN", {
+                          timeZone: "Asia/Kolkata",
                           month: "short",
                           day: "numeric",
                           hour: "2-digit",
                           minute: "2-digit",
-                        })}
+                          hour12: true,
+                        })} (IST)
                       </span>
                     </div>
 
@@ -166,7 +168,7 @@ export default function CandidateMentoring() {
                       Mentor: {session.otherParticipantName || "Mentor"}
                     </h3>
                     <p className="text-xs text-[#94A3B8]">
-                      End Time: {new Date(session.scheduledEndAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      End Time: {new Date(session.scheduledEndAt).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true })} (IST)
                     </p>
                   </div>
 

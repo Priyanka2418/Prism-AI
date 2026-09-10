@@ -19,6 +19,38 @@ export default function SessionChat() {
 
   const messagesEndRef = useRef(null);
 
+  const formatISTTime = (isoString) => {
+    if (!isoString) return "";
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleTimeString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch {
+      return "";
+    }
+  };
+
+  const formatISTDateTime = (isoString) => {
+    if (!isoString) return "";
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch {
+      return "";
+    }
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -140,7 +172,7 @@ export default function SessionChat() {
               <span>Session with {session?.otherParticipantName || "Mentor"}</span>
             </h2>
             <p className="text-[11px] text-[#94A3B8]">
-              Status: {session?.status} • Scheduled: {new Date(session?.scheduledStartAt).toLocaleString()}
+              Status: {session?.status} • Scheduled: {formatISTDateTime(session?.scheduledStartAt)} (IST)
             </p>
           </div>
         </div>
@@ -214,10 +246,7 @@ export default function SessionChat() {
                 </div>
 
                 <span className="text-[10px] text-[#94A3B8] mt-1 px-1">
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {formatISTTime(msg.createdAt)}
                 </span>
               </div>
             );

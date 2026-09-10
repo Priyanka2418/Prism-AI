@@ -125,24 +125,56 @@ export default function MentorDashboard() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Verification Status Banner */}
-        {!isVerified ? (
+        {profile?.verificationStatus === "REJECTED" ? (
+          <div className="mb-8 p-6 rounded-3xl bg-red-500/10 border border-red-500/30 text-red-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-red-500/20 flex items-center justify-center text-red-400 text-lg shrink-0">
+                <i className="fa-solid fa-circle-xmark" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-white text-base">
+                    Profile Status: Rejected
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500/20 text-red-300 border border-red-500/30">
+                    Application Rejected
+                  </span>
+                </div>
+                {profile?.rejectionReason ? (
+                  <p className="text-xs text-red-300/90 mt-1.5">
+                    <strong className="text-white">Reason from Admin:</strong> "{profile.rejectionReason}"
+                  </p>
+                ) : (
+                  <p className="text-xs text-red-300/80 mt-1.5">
+                    Your mentor application was reviewed and rejected by the platform administrator.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : !isVerified ? (
           <div className="mb-8 p-6 rounded-3xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-lg shrink-0">
                 <i className="fa-solid fa-hourglass-half" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-base">
-                  Profile Verification Pending
-                </h3>
-                <p className="text-xs text-amber-300/80 mt-0.5">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-white text-base">
+                    Profile Status: Pending Verification
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    Under Review
+                  </span>
+                </div>
+                <p className="text-xs text-amber-300/80 mt-1">
                   Platform administrators are reviewing your credentials and LinkedIn profile before opening public candidate bookings.
                 </p>
               </div>
             </div>
             <Link
               to="/mentor/profile"
-              className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-xs font-bold transition-all self-start sm:self-center"
+              className="px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-xs font-bold transition-all self-start sm:self-center shrink-0"
             >
               Edit Profile
             </Link>
@@ -296,10 +328,11 @@ export default function MentorDashboard() {
                           {sess.status}
                         </span>
                         <span className="text-xs text-[#94A3B8]">
-                          {new Date(sess.scheduledStartAt).toLocaleDateString(undefined, {
+                          {new Date(sess.scheduledStartAt).toLocaleDateString("en-IN", {
+                            timeZone: "Asia/Kolkata",
                             month: "short",
                             day: "numeric",
-                          })}
+                          })} (IST)
                         </span>
                       </div>
 
@@ -307,7 +340,7 @@ export default function MentorDashboard() {
                         Candidate: {sess.otherParticipantName || "Student"}
                       </h3>
                       <p className="text-xs text-[#94A3B8] mt-1">
-                        Time: {new Date(sess.scheduledStartAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - {new Date(sess.scheduledEndAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        Time: {new Date(sess.scheduledStartAt).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true })} - {new Date(sess.scheduledEndAt).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true })} (IST)
                       </p>
                     </div>
 

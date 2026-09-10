@@ -57,7 +57,7 @@ export default function AdminDashboard() {
 
     try {
       await rejectMentor(rejectingId, reason.trim());
-      setPendingMentors((prev) => prev.filter((m) => m.id !== id));
+      setPendingMentors((prev) => prev.filter((m) => m.id !== rejectingId));
       setRejectingId(null);
       setReason("");
       const updatedMentors = await getAllMentors();
@@ -164,7 +164,7 @@ export default function AdminDashboard() {
                   {mentor.linkedinUrl && (
                     <div className="mt-3">
                       <a
-                        href={mentor.linkedinUrl}
+                        href={mentor.linkedinUrl.startsWith("http://") || mentor.linkedinUrl.startsWith("https://") ? mentor.linkedinUrl : `https://${mentor.linkedinUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2DD4BF] hover:underline"

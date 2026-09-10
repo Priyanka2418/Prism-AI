@@ -69,7 +69,7 @@ function App() {
           <Route
             path="/interviews/new"
             element={
-              <ProtectedRoute allowedRoles={["CANDIDATE", "MENTOR", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["CANDIDATE"]}>
                 <CreateInterview />
               </ProtectedRoute>
             }
@@ -77,7 +77,7 @@ function App() {
           <Route
             path="/interviews/:id/room"
             element={
-              <ProtectedRoute allowedRoles={["CANDIDATE", "MENTOR", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["CANDIDATE"]}>
                 <InterviewRoom />
               </ProtectedRoute>
             }
@@ -85,7 +85,7 @@ function App() {
           <Route
             path="/interviews/:id/feedback"
             element={
-              <ProtectedRoute allowedRoles={["CANDIDATE", "MENTOR", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["CANDIDATE"]}>
                 <InterviewFeedback />
               </ProtectedRoute>
             }
@@ -93,7 +93,7 @@ function App() {
           <Route
             path="/mentors"
             element={
-              <ProtectedRoute allowedRoles={["CANDIDATE", "MENTOR", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["CANDIDATE"]}>
                 <MentorDiscovery />
               </ProtectedRoute>
             }
@@ -101,7 +101,7 @@ function App() {
           <Route
             path="/candidate/mentoring"
             element={
-              <ProtectedRoute allowedRoles={["CANDIDATE", "MENTOR", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["CANDIDATE"]}>
                 <CandidateMentoring />
               </ProtectedRoute>
             }

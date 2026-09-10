@@ -245,8 +245,8 @@ export default function CreateInterview() {
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#94A3B8] mb-2">
                   Duration (Minutes)
                 </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[15, 30, 45, 60].map((mins) => (
+                <div className="grid grid-cols-5 gap-2">
+                  {[10, 15, 30, 45, 60].map((mins) => (
                     <button
                       key={mins}
                       type="button"
