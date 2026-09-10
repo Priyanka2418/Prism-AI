@@ -17,10 +17,10 @@ public interface MentorSessionRepository
     Optional<MentorSession> findByMentorRequestId(UUID mentorRequestId);
 
     //candidate session UIs
-    List<MentorSession> findByMentorRequestStudentId(UUID studentId);
+    List<MentorSession> findByMentorRequestStudentIdAndDeletedByStudentFalse(UUID studentId);
 
     //Mentor session UIs
-    List<MentorSession> findByMentorRequestMentorId(UUID mentorId);
+    List<MentorSession> findByMentorRequestMentorIdAndDeletedByMentorFalse(UUID mentorId);
 
 
     List<MentorSession> findByStatusAndScheduledStartAtLessThanEqual(

@@ -64,6 +64,12 @@ public class MentorSession {
     )
     private SessionStatus status = SessionStatus.UPCOMING;
 
+    @Column(name = "deleted_by_student", nullable = false)
+    private boolean deletedByStudent = false;
+
+    @Column(name = "deleted_by_mentor", nullable = false)
+    private boolean deletedByMentor = false;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

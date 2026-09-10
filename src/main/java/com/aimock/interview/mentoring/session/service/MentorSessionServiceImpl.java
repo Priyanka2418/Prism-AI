@@ -79,7 +79,7 @@ public class MentorSessionServiceImpl implements MentorSessionService{
                                         "Candidate profile not found"));
 
         return mentorSessionRepository
-                .findByMentorRequestStudentId(candidateProfile.getId())
+                .findByMentorRequestStudentIdAndDeletedByStudentFalse(candidateProfile.getId())
                 .stream()
                 .map(session ->
                         mentorSessionMapper.toResponse(
@@ -103,7 +103,7 @@ public class MentorSessionServiceImpl implements MentorSessionService{
                                         "Mentor profile not found"));
 
         return mentorSessionRepository
-                .findByMentorRequestMentorId(mentorProfile.getId())
+                .findByMentorRequestMentorIdAndDeletedByMentorFalse(mentorProfile.getId())
                 .stream()
                 .map(session ->
                         mentorSessionMapper.toResponse(
@@ -178,15 +178,24 @@ public class MentorSessionServiceImpl implements MentorSessionService{
         UUID mentorUserId = mentorRequest.getMentor().getUser().getId();
         UUID currentUserId = currentUser.getId();
 
-        if (!currentUserId.equals(studentUserId) && !currentUserId.equals(mentorUserId)) {
+        if (currentUserId.equals(studentUserId)) {
+            mentorSession.setDeletedByStudent(true);
+        } else if (currentUserId.equals(mentorUserId)) {
+            mentorSession.setDeletedByMentor(true);
+        } else if (currentUser.getRole() == com.aimock.interview.common.enums.Role.ADMIN) {
+            mentorSession.setDeletedByStudent(true);
+            mentorSession.setDeletedByMentor(true);
+        } else {
             throw new ForbiddenException("You are not authorized to delete this mentoring session");
         }
 
-        // Delete all chat messages associated with this session first
-        chatMessageRepository.deleteByMentorSessionId(sessionId);
-
-        // Delete the session record
-        mentorSessionRepository.delete(mentorSession);
+        // Only physically remove records if both sides have deleted the session
+        if (mentorSession.isDeletedByStudent() && mentorSession.isDeletedByMentor()) {
+            chatMessageRepository.deleteByMentorSessionId(sessionId);
+            mentorSessionRepository.delete(mentorSession);
+        } else {
+            mentorSessionRepository.save(mentorSession);
+        }
     }
 
 }
