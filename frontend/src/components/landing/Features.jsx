@@ -3,7 +3,7 @@ import mentorImage from "../../assets/mentor.png";
 
 function Features() {
   return (
-    <section id="pathways" className="w-full px-6 py-24">
+    <section id="features" className="w-full px-6 py-24">
       <div className="mx-auto w-full max-w-7xl">
       {/* Section Heading */}
       <div className="mb-16">
@@ -19,7 +19,7 @@ function Features() {
       {/* Bento Grid */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Candidate Path */}
-        <div className="group relative h-[420px] overflow-hidden rounded-2xl md:h-[500px]">
+        <div id="ai-interview" className="group relative h-[420px] overflow-hidden rounded-2xl md:h-[500px]">
           {/* Image */}
           <div className="absolute inset-0 h-full">
             <img
@@ -46,7 +46,7 @@ function Features() {
         </div>
 
         {/* Mentor Path */}
-        <div className="group relative h-[420px] overflow-hidden rounded-2xl md:h-[500px]">
+        <div id="mentorship" className="group relative h-[420px] overflow-hidden rounded-2xl md:h-[500px]">
           {/* Image */}
           <div className="absolute inset-0 h-full">
             <img

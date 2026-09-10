@@ -1,4 +1,9 @@
 const Footer = () => {
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <footer className="bg-[#151126] border-t border-white/10 pt-20 pb-10 px-6">
       {/* Main Footer */}
@@ -22,39 +27,39 @@ const Footer = () => {
 
           <ul className="space-y-4 text-sm text-mute">
             <li>
-              <a
-                href="#features"
-                className="hover:text-white transition-colors"
+              <button
+                onClick={() => scrollTo("features")}
+                className="hover:text-white transition-colors text-left"
               >
                 Features
-              </a>
+              </button>
             </li>
 
             <li>
-              <a
-                href="#how-it-works"
-                className="hover:text-white transition-colors"
+              <button
+                onClick={() => scrollTo("how-it-works")}
+                className="hover:text-white transition-colors text-left"
               >
                 How it works
-              </a>
+              </button>
             </li>
 
             <li>
-              <a
-                href="#ai-interview"
-                className="hover:text-white transition-colors"
+              <button
+                onClick={() => scrollTo("ai-interview")}
+                className="hover:text-white transition-colors text-left"
               >
                 AI Interview
-              </a>
+              </button>
             </li>
 
             <li>
-              <a
-                href="#mentorship"
-                className="hover:text-white transition-colors"
+              <button
+                onClick={() => scrollTo("mentorship")}
+                className="hover:text-white transition-colors text-left"
               >
                 Mentorship
-              </a>
+              </button>
             </li>
           </ul>
         </div>

@@ -27,7 +27,7 @@ const processSteps = [
 
 function Process() {
   return (
-    <section id = "about" className="bg-[#0D0B18] px-6 py-20">
+    <section id="how-it-works" className="bg-[#0D0B18] px-6 py-20">
       <div className="mx-auto max-w-7xl">
         {/* Section heading */}
         <div className="mb-8">
