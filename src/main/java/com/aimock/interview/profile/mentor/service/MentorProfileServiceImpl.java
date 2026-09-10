@@ -100,11 +100,6 @@ public class MentorProfileServiceImpl implements MentorProfileService {
                         .orElseThrow(() -> new ResourceNotFoundException(
                                         "Mentor profile not found"));
 
-        if (profile.getVerificationStatus() != VerificationStatus.VERIFIED) {
-            throw new ForbiddenException(
-                    "Mentor profile is not verified");
-        }
-
         return mentorProfileMapper.toPublicResponse(profile);
     }
 
@@ -117,13 +112,15 @@ public class MentorProfileServiceImpl implements MentorProfileService {
         MentorProfile profile = mentorProfileRepository.findByUserId(user.getId())
                 .orElseThrow(()-> new ResourceNotFoundException("Mentor Profile not found"));
 
-        if (profile.getVerificationStatus()
-                != VerificationStatus.VERIFIED) {
-            throw new ForbiddenException(
-                    "Mentor profile must be verified before updating public profile");
-        }
-
         mentorProfileMapper.updateProfile(request, profile);
+
+        // If a rejected mentor resubmits their profile, reset status to PENDING for admin review
+        if (profile.getVerificationStatus() == VerificationStatus.REJECTED) {
+            profile.setVerificationStatus(VerificationStatus.PENDING);
+            profile.setRejectionReason(null);
+            profile.setVerifiedBy(null);
+            profile.setVerifiedAt(null);
+        }
 
         profile.setPublicProfileStatus(
                 PublicProfileStatus.COMPLETED);
