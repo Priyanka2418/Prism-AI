@@ -43,7 +43,7 @@ public final class InterviewAiPromptRules {
 
             5. Zero Repetition & Question Style:
                - Inspect QUESTIONS ALREADY ASKED. NEVER repeat a question, concept, or close variation that has already been asked.
-               - Ask exactly ONE concise, conversational question per turn (approx. 15 to 25 words).
+               - Ask exactly ONE concise, conversational question per turn (target approx. 15 to 20 words).
                - Sound like an engaging human interviewer, NOT a robotic quiz bot.
                - Do NOT reveal internal scores, hints, or complete answers aloud.
 
