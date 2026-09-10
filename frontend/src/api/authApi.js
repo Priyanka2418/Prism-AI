@@ -10,7 +10,7 @@ export async function loginUser(email, password) {
 }
 
 export async function registerCandidate(email, password) {
-  const data = await api.post("/users/candidate", { email, password });
+  const data = await api.post("/auth/register/candidate", { email, password });
   if (data?.accessToken) {
     sessionStorage.setItem("prism_access_token", data.accessToken);
     localStorage.setItem("prism_access_token", data.accessToken);
@@ -19,7 +19,7 @@ export async function registerCandidate(email, password) {
 }
 
 export async function registerMentor(email, password) {
-  const data = await api.post("/users/mentor", { email, password });
+  const data = await api.post("/auth/register/mentor", { email, password });
   if (data?.accessToken) {
     sessionStorage.setItem("prism_access_token", data.accessToken);
     localStorage.setItem("prism_access_token", data.accessToken);
