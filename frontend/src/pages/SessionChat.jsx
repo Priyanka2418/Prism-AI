@@ -2,7 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import AppNavbar from "../components/common/AppNavbar";
 import { useAuth } from "../context/AuthContext";
-import { getSession, getChatHistory, sendChatMessage, deleteChatMessage, deleteSession } from "../api/mentoringApi";
+import {
+  getSession,
+  getChatHistory,
+  deleteChatMessage,
+  deleteSession,
+} from "../api/mentoringApi";
+
+import {
+  createChatClient,
+  sendChatMessage as sendWebSocketMessage,
+} from "../service/websocket";
 
 export default function SessionChat() {
   const { sessionId } = useParams();
@@ -18,6 +28,8 @@ export default function SessionChat() {
   const [error, setError] = useState("");
 
   const messagesEndRef = useRef(null);
+  const stompClientRef = useRef(null);
+
 
   const formatISTTime = (isoString) => {
     if (!isoString) return "";
@@ -56,39 +68,79 @@ export default function SessionChat() {
   };
 
   useEffect(() => {
-    let intervalId;
+    let cancelled = false;
 
-    async function loadSessionAndChat() {
+    async function initializeSession() {
       try {
         const [sessionData, chatData] = await Promise.all([
           getSession(sessionId),
           getChatHistory(sessionId),
         ]);
+
+        if (cancelled) return;
+
         setSession(sessionData);
         setMessages(chatData || []);
+
+        const client = createChatClient({
+          sessionId,
+
+          onMessage: (chatMessage) => {
+            setMessages((prev) => {
+              // Prevent duplicate messages
+              if (
+                  chatMessage.id &&
+                  prev.some((message) => message.id === chatMessage.id)
+              ) {
+                return prev;
+              }
+
+              return [...prev, chatMessage];
+            });
+          },
+
+          onConnect: () => {
+            console.log(
+                `[SessionChat] WebSocket connected for session ${sessionId}`
+            );
+          },
+
+          onError: (error) => {
+            console.error("[SessionChat] WebSocket error:", error);
+            setError(
+                error.message || "Real-time chat connection failed."
+            );
+          },
+        });
+
+        stompClientRef.current = client;
       } catch (err) {
         console.error(err);
-        setError(err.message || "Failed to load session chat.");
+
+        if (!cancelled) {
+          setError(
+              err.message || "Failed to load session chat."
+          );
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
-    loadSessionAndChat();
+    initializeSession();
 
-    // Poll for new messages every 3 seconds
-    intervalId = setInterval(async () => {
-      try {
-        const chatData = await getChatHistory(sessionId);
-        if (chatData) {
-          setMessages(chatData);
-        }
-      } catch {
-        // silent catch on background poll
+    return () => {
+      cancelled = true;
+
+      if (stompClientRef.current) {
+        console.log("[SessionChat] Disconnecting WebSocket");
+
+        stompClientRef.current.deactivate();
+        stompClientRef.current = null;
       }
-    }, 3000);
-
-    return () => clearInterval(intervalId);
+    };
   }, [sessionId]);
 
   useEffect(() => {
@@ -97,18 +149,28 @@ export default function SessionChat() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputText.trim() || sending) return;
+
+    if (!inputText.trim() || sending) {
+      return;
+    }
 
     const content = inputText.trim();
+
     setInputText("");
     setSending(true);
 
     try {
-      const newMsg = await sendChatMessage(sessionId, content);
-      setMessages((prev) => [...prev, newMsg]);
+      sendWebSocketMessage(
+          stompClientRef.current,
+          sessionId,
+          content
+      );
     } catch (err) {
       console.error(err);
-      setError(err.message || "Failed to send message.");
+
+      setError(
+          err.message || "Failed to send message."
+      );
     } finally {
       setSending(false);
     }

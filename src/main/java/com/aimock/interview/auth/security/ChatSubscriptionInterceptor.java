@@ -1,5 +1,6 @@
 package com.aimock.interview.auth.security;
 
+import com.aimock.interview.mentoring.session.common.SessionStatus;
 import com.aimock.interview.mentoring.session.entity.MentorSession;
 import com.aimock.interview.mentoring.session.repository.MentorSessionRepository;
 import com.aimock.interview.user.entity.User;
@@ -80,6 +81,11 @@ public class ChatSubscriptionInterceptor
                                             "Mentor session not found"
                                     )
                             );
+            if (mentorSession.getStatus() != SessionStatus.IN_PROGRESS) {
+                throw new MessageDeliveryException(
+                        "Chat is only available while the session is in progress"
+                );
+            }
 
             System.out.println(
                     "MentorSession loaded = " + mentorSession.getId()
