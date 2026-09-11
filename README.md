@@ -4,6 +4,14 @@
   <strong>Adaptive AI Mock Interview Studio, Multi-Turn Behavioral & Technical Evaluation, and Real-Time Industry Mentorship Platform</strong>
 </p>
 
+## 🚀 Live Demo
+
+<p align="center">
+  <a href="https://prism-ai-xi.vercel.app/">
+    <strong>🌐Prism-AI</strong>
+  </a>
+</p>
+
 <p align="center">
 <img src="https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 25"/>
 <img src="https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot 4"/>
@@ -117,41 +125,66 @@ Unlike traditional quiz bots that iterate through hardcoded question pools, **Pr
 
 ## 💻 Tech Stack
 
-| Domain | Technologies |
-|---|---|
-| **Backend Core** | Java 25, Spring Boot 4.1.0, Spring MVC, Spring Data JPA |
-| **AI & Inference** | Spring AI 2.0.0, Groq Cloud API (`openai/gpt-oss-20b`), Jackson JSON |
-| **Security & Auth** | Spring Security, JWT (JSON Web Tokens), BCrypt, Role-Based Access Control |
-| **Database & Persistence** | PostgreSQL, Hibernate ORM, JPA |
-| **Real-Time Layer** | Spring WebSocket, STOMP Protocol |
-| **Frontend Platform** | React 19, Vite 8, Tailwind CSS 4, React Router DOM 7 |
-| **Media & Audio** | Browser `MediaRecorder` API, Web Speech Recognition API, SpeechSynthesis, IndexedDB |
-| **Tooling & Build** | Maven, npm, Docker, Postman |
+| Domain                     | Technologies                                                                      |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| **Backend Core**           | Java 25, Spring Boot 4.1.0, Spring MVC, Spring Data JPA                           |
+| **AI & Inference**         | Spring AI 2.0.0, Groq Cloud API (`openai/gpt-oss-20b`), Jackson JSON              |
+| **Security & Auth**        | Spring Security, JWT, BCrypt, Role-Based Access Control                           |
+| **Database & Persistence** | PostgreSQL, Hibernate ORM, JPA                                                    |
+| **Real-Time Layer**        | Spring WebSocket, STOMP Protocol                                                  |
+| **Frontend Platform**      | React 19, Vite 8, Tailwind CSS 4, React Router DOM 7                              |
+| **Media & Audio**          | Browser MediaRecorder API, Web Speech Recognition API, SpeechSynthesis, IndexedDB |
+| **Tooling & Build**        | Maven, npm, Docker, Postman                                                       |
+| **Deployment**             | Vercel, Render, Render PostgreSQL                                                 |
 
 ---
 
 ## 🚀 Getting Started
 
 ### 📋 Prerequisites
+
 Ensure you have the following installed on your machine:
-* **Java Development Kit (JDK):** Version `25` 
+
+* **Java Development Kit (JDK):** Version `25`
 * **Node.js:** Version `20+`
-* **PostgreSQL:** PostgreSQL (running on port `5432`)
-* **Groq API Key:** Obtainable for free at [console.groq.com](https://console.groq.com/)
+* **PostgreSQL:** PostgreSQL running on port `5432`
+* **Git:** Latest stable version
+* **Groq API Key:** Obtainable from [Groq Console](https://console.groq.com/)
 
 ---
 
-### ⚙️ 1. Database Setup
-Create a new PostgreSQL database:
+### ⚙️ 1. Clone the Repository
+
+```bash
+git clone https://github.com/Priyanka2418/Prism-AI.git
+cd Prism-AI
+```
+
+---
+
+### 🗄️ 2. Database Setup
+
+Create a PostgreSQL database:
 
 ```sql
 CREATE DATABASE ai_mock_interview;
 ```
 
+Make sure PostgreSQL is running on port `5432`.
+
 ---
 
-### 🔧 2. Backend Configuration
-Set your environment variables or configure [`src/main/resources/application-local.yaml`](src/main/resources/application-local.yaml):
+### 🔧 3. Backend Configuration
+
+The backend uses Spring Boot configuration with environment variables for sensitive values.
+
+Local configuration can be found at:
+
+```text
+src/main/resources/application-local.yaml
+```
+
+Example:
 
 ```yaml
 spring:
@@ -173,45 +206,140 @@ spring:
     show-sql: false
 
 jwt:
-  secret: "your_super_secret_256_bit_jwt_signing_key_here_prism_ai"
-  access-token-expiration: 3600000     # 1 hour (ms)
-  refresh-token-expiration: 604800000  # 7 days (ms)
+  secret: ${JWT_SECRET}
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
+```
+
+Set the required environment variables:
+
+```text
+GROQ_API_KEY=your_groq_api_key
+JWT_SECRET=your_secure_jwt_secret
 ```
 
 ---
 
-### 🏃 3. Run the Application
+### 🏃 4. Run the Backend
 
-#### Start the Backend:
+From the project root:
+
 ```bash
-# From the project root:
 ./mvnw spring-boot:run
 ```
-*Backend runs on `http://localhost:8080` (API documentation accessible via `/swagger-ui.html` if enabled).*
 
-#### Start the Frontend:
+#### Windows PowerShell
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+The backend runs at:
+
+```text
+http://localhost:8080
+```
+
+If Swagger/OpenAPI is enabled, API documentation is available at:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+---
+
+### 🌐 5. Run the Frontend
+
+Open a separate terminal:
+
 ```bash
-# In a separate terminal:
 cd frontend
 npm install
 npm run dev
 ```
-*Frontend runs on `http://localhost:5173`.*
+
+The frontend runs at:
+
+```text
+http://localhost:5173
+```
+
+During local development, Vite proxies `/api` requests to:
+
+```text
+http://localhost:8080
+```
 
 ---
 
-## 🚢 Production Deployment
+For local development, PostgreSQL runs on:
 
-For full cloud deployment instructions on **Railway** (Backend + PostgreSQL) and **Vercel** (Frontend SPA), refer to the detailed [Deployment Guide](deployment_guide.md).
+```text
+localhost:5432
+```
+
+with the database:
+
+```text
+ai_mock_interview
+```
 
 ---
 
-## 📄 License
+## ☁️ Deployment
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+Prism-AI is deployed using **Vercel for the frontend** and **Render for the backend and PostgreSQL database**.
 
+```text
+                         GitHub
+                           │
+                  ┌────────┴────────┐
+                  │                 │
+                  ▼                 ▼
+              Frontend           Backend
+                  │                 │
+                  ▼                 ▼
+               Vercel             Render
+                                    │
+                                    ▼
+                            Render PostgreSQL
+```
+
+
+
+## 🤖 AI Interview Flow
+
+Prism-AI uses Spring AI with Groq for AI-powered interview conversations.
+
+```text
+Candidate
+    │
+    ▼
+Interview Room
+    │
+    ▼
+Spring Boot Backend
+    │
+    ▼
+Spring AI
+    │
+    ▼
+Groq Cloud API
+    │
+    ▼
+AI Interview Response
+    │
+    ├──────────────► SpeechSynthesis
+    │
+    ▼
+Interview Evaluation
+    │
+    ▼
+Interview Feedback
+```
 ---
 
 <p align="center">
-  Built with ❤️ for aspiring software engineers, tech leaders, and interviewees worldwide.
+  <strong>Prism-AI</strong><br/>
+  AI-powered mock interviews, evaluation, and mentorship.
 </p>
