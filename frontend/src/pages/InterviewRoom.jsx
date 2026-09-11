@@ -444,76 +444,89 @@ export default function InterviewRoom() {
   return (
     <div className="min-h-screen bg-[#0A0910] text-white flex flex-col h-screen overflow-hidden">
       {/* Top Session Bar */}
-      <header className="h-16 px-6 bg-[#0F172A] border-b border-[#334155]/80 flex items-center justify-between z-30 shrink-0">
-        <div className="flex items-center gap-4">
+      <header className="h-16 px-4 sm:px-6 bg-[#0F172A] border-b border-[#334155]/80 flex items-center justify-between z-30 shrink-0">
+
+        {/* Back Arrow */}
+        <div className="flex items-center shrink-0">
           <Link
-            to="/candidate/dashboard"
-            className="text-xs text-[#94A3B8] hover:text-white flex items-center gap-1.5"
+              to="/candidate/dashboard"
+              className="text-[#94A3B8] hover:text-white flex items-center"
+              title="Back to Dashboard"
           >
-            <i className="fa-solid fa-arrow-left" />
-            <span className="hidden sm:inline">Dashboard</span>
+            <i className="fa-solid fa-arrow-left text-sm" />
           </Link>
+        </div>
 
-          <div className="h-4 w-[1px] bg-[#334155]" />
+        {/* Interview Info - Desktop Only */}
+        <div className="hidden sm:flex flex-1 items-center ml-4 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
+      <span className="text-sm font-bold text-white line-clamp-1">
+        {interview?.title || interview?.targetRole}
+      </span>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-white line-clamp-1">
-                {interview?.title || interview?.targetRole}
-              </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#2DD4BF]/10 text-[#2DD4BF] border border-[#2DD4BF]/20">
-                {interview?.interviewType}
-              </span>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                {currentQuestion?.difficulty || interview?.interviewDifficulty}
-              </span>
-            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#2DD4BF]/10 text-[#2DD4BF] border border-[#2DD4BF]/20">
+        {interview?.interviewType}
+      </span>
+
+            <span className="hidden md:inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+        {currentQuestion?.difficulty || interview?.interviewDifficulty}
+      </span>
           </div>
         </div>
 
-        {/* Center Timer */}
-        <div className="flex items-center gap-4">
-          <div className="px-3.5 py-1.5 rounded-full bg-[#1E293B] border border-[#334155] flex items-center gap-2 text-sm font-mono font-bold text-[#2DD4BF]">
-            <i className="fa-solid fa-clock text-xs" />
-            <span>Time Remaining: {formatTimer(secondsRemaining)}</span>
+        {/* Timer */}
+        <div className="flex items-center justify-center shrink-0 mx-2 sm:mx-4">
+          <div className="px-2.5 sm:px-3.5 py-1.5 rounded-full bg-[#1E293B] border border-[#334155] flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-mono font-bold text-[#2DD4BF]">
+            <i className="fa-solid fa-clock text-[10px] sm:text-xs" />
+            <span className="whitespace-nowrap">
+        <span className="hidden sm:inline">Time Remaining: </span>
+              {formatTimer(secondsRemaining)}
+      </span>
           </div>
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+
+          {/* History */}
           <button
-            onClick={() => setShowHistory(!showHistory)}
-            className={`px-3 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-              showHistory
-                ? "bg-[#2DD4BF]/10 border-[#2DD4BF] text-[#2DD4BF]"
-                : "border-[#334155] text-[#94A3B8] hover:text-white"
-            }`}
+              onClick={() => setShowHistory(!showHistory)}
+              className={`p-2 sm:px-3 sm:py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                  showHistory
+                      ? "bg-[#2DD4BF]/10 border-[#2DD4BF] text-[#2DD4BF]"
+                      : "border-[#334155] text-[#94A3B8] hover:text-white"
+              }`}
+              title="Question History"
           >
             <i className="fa-solid fa-list-ol" />
-            <span className="hidden md:inline">History ({turns.filter((t) => t.speaker === "AI").length})</span>
+            <span className="hidden md:inline">
+        History ({turns.filter((t) => t.speaker === "AI").length})
+      </span>
           </button>
 
+          {/* End Interview */}
           <button
-            onClick={handleFinishEarly}
-            className="px-3.5 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-xs font-bold transition-all"
+              onClick={handleFinishEarly}
+              className="px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-xs font-bold transition-all whitespace-nowrap"
           >
-            End Interview
+            <span className="hidden sm:inline">End Interview</span>
+            <span className="sm:hidden">End</span>
           </button>
+
         </div>
       </header>
+
 
       {/* Main Studio Workspace */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden relative">
         {/* LEFT / TOP: AI Interviewer Console (6 cols) */}
-        <div className="lg:col-span-6 p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#334155]/60 bg-gradient-to-b from-[#0F172A] to-[#0A0910] overflow-y-auto">
-          <div>
+        <div className="lg:col-span-6 p-4 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#334155]/60 bg-gradient-to-b from-[#0F172A] to-[#0A0910] overflow-y-auto">          <div>
             {/* AI Avatar & Speaker Status */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="flex items-center gap-3">
                 <div className="relative">
                   <div
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl text-[#0F172A] font-bold shadow-lg transition-transform ${
-                      isSpeaking
+                      className={`w-9 h-9 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-base sm:text-xl text-[#0F172A] font-bold shadow-lg transition-transform ${                      isSpeaking
                         ? "bg-[#2DD4BF] scale-105 ring-4 ring-[#2DD4BF]/30 animate-pulse"
                         : isAnalyzing
                         ? "bg-amber-400 scale-105 ring-4 ring-amber-400/30 animate-spin"
@@ -527,8 +540,8 @@ export default function InterviewRoom() {
                   )}
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">Prism AI Interviewer</h3>
-                  <p className="text-xs text-[#94A3B8]">
+                  <h3 className="font-bold text-white text-sm sm:text-base">Prism AI Interviewer</h3>
+                  <p className="text-[10px] sm:text-xs text-[#94A3B8]">
                     {isAnalyzing ? (
                       <span className="text-amber-400 flex items-center gap-1.5 font-semibold">
                         <i className="fa-solid fa-spinner fa-spin" /> {analyzingStage}
@@ -570,8 +583,7 @@ export default function InterviewRoom() {
             </div>
 
             {/* Question Card */}
-            <div className="p-6 rounded-3xl bg-[#1E293B]/90 border border-[#334155] shadow-2xl relative min-h-[140px] flex flex-col justify-between">
-              {isAnalyzing ? (
+          <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-[#1E293B]/90 border border-[#334155] shadow-2xl relative min-h-[120px] sm:min-h-[140px] flex flex-col justify-between">              {isAnalyzing ? (
                 <div className="py-6 flex flex-col items-center justify-center text-center space-y-3">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#2DD4BF] animate-bounce" style={{ animationDelay: "0ms" }} />
@@ -591,8 +603,7 @@ export default function InterviewRoom() {
                     </span>
                   </div>
 
-                  <h2 className="text-xl sm:text-2xl font-bold leading-relaxed text-white">
-                    {currentQuestion?.content || "Generating next adaptive interview question..."}
+                  <h2 className="text-base sm:text-2xl font-bold leading-relaxed text-white">                    {currentQuestion?.content || "Generating next adaptive interview question..."}
                   </h2>
                 </>
               )}
@@ -600,7 +611,7 @@ export default function InterviewRoom() {
           </div>
 
           {/* AI Tips / Turn Guidance */}
-          <div className="mt-6 p-4 rounded-2xl bg-[#1E293B]/40 border border-[#334155]/60 text-xs text-[#94A3B8] flex items-start gap-3">
+          <div className="hidden lg:flex mt-6 p-4 rounded-2xl bg-[#1E293B]/40 border border-[#334155]/60 text-xs text-[#94A3B8] items-start gap-3">
             <i className="fa-solid fa-lightbulb text-[#2DD4BF] text-sm mt-0.5" />
             <div>
               <p className="font-semibold text-white/90">Interviewer Tip</p>
@@ -612,14 +623,12 @@ export default function InterviewRoom() {
         </div>
 
         {/* RIGHT / BOTTOM: Candidate Response Studio (6 cols) */}
-        <div className="lg:col-span-6 p-6 flex flex-col justify-between bg-[#0F172A] overflow-y-auto">
-          <div>
+        <div className="lg:col-span-6 p-4 sm:p-6 flex flex-col justify-between bg-[#0F172A] overflow-y-auto">          <div>
             {/* Top Bar: Candidate Video & Controls */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-wider text-white">
-                  Candidate Studio
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-white">                  Candidate Studio
                 </span>
               </div>
 
@@ -640,8 +649,7 @@ export default function InterviewRoom() {
             </div>
 
             {/* Webcam Preview Box */}
-            <div className="relative w-full h-44 sm:h-52 rounded-2xl bg-[#0A0910] border border-[#334155] overflow-hidden mb-6 flex items-center justify-center">
-              {cameraEnabled ? (
+          <div className="relative w-full h-40 sm:h-52 rounded-2xl bg-[#0A0910] border border-[#334155] overflow-hidden mb-4 sm:mb-6 flex items-center justify-center">              {cameraEnabled ? (
                 <video
                   ref={videoRef}
                   autoPlay
@@ -681,7 +689,7 @@ export default function InterviewRoom() {
               )}
 
               <div className="relative">
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#94A3B8] mb-2 flex items-center justify-between">
+                <label className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#94A3B8] mb-2 flex items-center justify-between">
                   <span>Your Answer</span>
                   <span className="font-mono text-[#2DD4BF]">
                     Response Time: {answerDurationSeconds}s
@@ -689,13 +697,13 @@ export default function InterviewRoom() {
                 </label>
 
                 <textarea
-                  rows={6}
+                  rows={5}
                   required
                   disabled={isAnalyzing}
                   value={answerText}
                   onChange={(e) => setAnswerText(e.target.value)}
                   placeholder="Speak your answer using the microphone below or type your response here..."
-                  className="w-full px-4 py-3 rounded-2xl bg-[#0A0910] border border-[#334155] text-white placeholder:text-[#94A3B8]/40 outline-none focus:border-[#2DD4BF] resize-none text-sm leading-relaxed disabled:opacity-50"
+                  className="w-full px-4 py-3 rounded-2xl bg-[#0A0910] border border-[#334155] text-white placeholder:text-[#94A3B8]/40 outline-none focus:border-[#2DD4BF] resize-none text-xs sm:text-sm leading-relaxed disabled:opacity-50"
                 />
               </div>
 

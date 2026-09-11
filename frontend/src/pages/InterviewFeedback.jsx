@@ -185,15 +185,17 @@ export default function InterviewFeedback() {
     <div className="min-h-screen bg-[#0F172A] text-white flex flex-col">
       <AppNavbar />
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-10">
         {/* Breadcrumb & Top Navigation */}
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+        <div className="flex items-center justify-between mb-5 sm:mb-8 flex-wrap gap-3">
           <Link
             to={isMentor ? "/mentor/dashboard" : "/candidate/dashboard"}
             className="text-xs font-semibold text-[#94A3B8] hover:text-white flex items-center gap-2"
           >
             <i className="fa-solid fa-arrow-left" />
-            <span>{isMentor ? "Back to Mentor Dashboard" : "Back to Dashboard"}</span>
+            <span className="hidden sm:inline">
+              {isMentor ? "Back to Mentor Dashboard" : "Back to Dashboard"}
+            </span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -216,15 +218,14 @@ export default function InterviewFeedback() {
 
                 <Link
                   to={`/mentors?interviewId=${interviewId}`}
-                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg transition-all flex items-center gap-2"
-                >
+                  className="hidden sm:flex px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg transition-all items-center gap-2"                >
                   <i className="fa-solid fa-chalkboard-user" />
                   <span>Review with a Mentor</span>
                 </Link>
 
                 <Link
                   to="/interviews/new"
-                  className="px-4 py-2 rounded-xl bg-[#2DD4BF] text-[#0F172A] font-bold text-xs shadow-[0_0_15px_rgba(45,212,191,0.3)] hover:scale-105 transition-all flex items-center gap-2"
+                  className=" hidden sm:flex px-4 py-2 rounded-xl bg-[#2DD4BF] text-[#0F172A] font-bold text-xs shadow-[0_0_15px_rgba(45,212,191,0.3)] hover:scale-105 transition-all flex items-center gap-2"
                 >
                   <i className="fa-solid fa-rotate-right" />
                   <span>Take Another Mock</span>
@@ -258,9 +259,9 @@ export default function InterviewFeedback() {
         )}
 
         {/* Title Header */}
-        <div className="p-8 rounded-3xl bg-gradient-to-r from-[#1E293B] via-[#0F172A] to-[#1E293B] border border-[#334155] shadow-2xl mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#1E293B] via-[#0F172A] to-[#1E293B] border border-[#334155] shadow-2xl mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3 flex-wrap">
               <span className="px-3 py-1 rounded-full bg-[#2DD4BF]/10 text-[#2DD4BF] border border-[#2DD4BF]/20 text-xs font-bold uppercase tracking-wider">
                 Evaluation Report
               </span>
@@ -271,10 +272,10 @@ export default function InterviewFeedback() {
                 {interview?.status}
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-white">
+            <h1 className="text-xl sm:text-4xl font-black text-white leading-tight">
               {interview?.title || interview?.targetRole}
             </h1>
-            <p className="text-sm text-[#94A3B8] mt-1 flex items-center gap-2">
+            <p className="text-xs sm:text-sm text-[#94A3B8] mt-1 flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <span className="font-semibold text-white/90">{interview?.targetRole}</span>
               <span>•</span>
               <span>Session with {turns.filter((t) => t.speaker === "AI").length} AI questions asked.</span>
@@ -285,8 +286,7 @@ export default function InterviewFeedback() {
             <button
               onClick={handleGenerateFeedback}
               disabled={generating}
-              className={`px-6 py-4 rounded-xl font-bold text-sm transition-all active:scale-[0.98] flex items-center gap-2 shrink-0 ${
-                feedback
+              className={`w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-bold text-xs sm:text-sm transition-all active:scale-[0.98] flex items-center justify-center gap-2 shrink-0 ${feedback
                   ? "bg-[#1E293B] border border-[#2DD4BF]/50 text-[#2DD4BF] hover:bg-[#2DD4BF]/10 shadow-[0_0_15px_rgba(45,212,191,0.2)] hover:scale-105"
                   : "bg-[#2DD4BF] text-[#0F172A] shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:scale-105"
               }`}

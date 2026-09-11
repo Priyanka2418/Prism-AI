@@ -310,8 +310,7 @@ export default function CreateInterview() {
               <button
                 type="button"
                 onClick={handleAddTopic}
-                className="px-5 py-2.5 rounded-xl bg-[#334155] text-white hover:bg-[#2DD4BF] hover:text-[#0F172A] font-medium transition-colors"
-              >
+                className="w-auto max-w-full shrink-0 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl bg-[#334155] text-white hover:bg-[#2DD4BF] hover:text-[#0F172A] font-medium text-xs sm:text-base transition-colors whitespace-nowrap"              >
                 Add Topic
               </button>
             </div>
@@ -341,19 +340,18 @@ export default function CreateInterview() {
           </div>
 
           {/* Submit */}
-          <div className="flex items-center justify-end gap-4">
+          <div className="flex items-center justify-center gap-3 sm:gap-4">
             <button
               type="button"
               onClick={() => navigate("/candidate/dashboard")}
-              className="px-6 py-4 rounded-xl border border-[#334155] text-[#94A3B8] font-bold text-sm hover:text-white transition-colors"
+              className="px-4 py-3 sm:px-6 sm:py-4 rounded-xl border border-[#334155] text-[#94A3B8] font-bold text-xs sm:text-sm hover:text-white transition-colors whitespace-nowrap"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isCreating}
-              className="px-8 py-4 rounded-xl bg-[#2DD4BF] text-[#0F172A] font-bold text-sm shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:shadow-[0_0_35px_rgba(45,212,191,0.5)] transition-all active:scale-[0.98] disabled:opacity-60 flex items-center gap-2"
-            >
+              className="px-4 py-3 sm:px-8 sm:py-4 rounded-xl bg-[#2DD4BF] text-[#0F172A] font-bold text-xs sm:text-sm shadow-[0_0_25px_rgba(45,212,191,0.35)] hover:shadow-[0_0_35px_rgba(45,212,191,0.5)] transition-all active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2 whitespace-nowrap"            >
               {isCreating ? (
                 <>
                   <i className="fa-solid fa-spinner fa-spin" />

@@ -332,8 +332,7 @@ export default function MentorProfile() {
                 <button
                   type="button"
                   onClick={handleAddExpertise}
-                  className="px-5 py-2.5 rounded-xl bg-[#334155] text-white hover:bg-[#2DD4BF] hover:text-[#0F172A] font-medium transition-colors"
-                >
+                  className="px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl bg-[#334155] text-white hover:bg-[#2DD4BF] hover:text-[#0F172A] font-medium text-xs sm:text-base transition-colors"                >
                   Add
                 </button>
               </div>
